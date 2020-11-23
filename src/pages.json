@@ -1,0 +1,116 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "明细"
+      }
+    }, {
+      "path": "pages/index/add",
+      "style": {
+        "navigationBarTitleText": "记账"
+      }
+    }, {
+      "path": "pages/index/edit",
+      "style": {
+        "navigationBarTitleText": "编辑账单"
+      }
+    }, {
+      "path": "pages/chart/chart",
+      "style": {
+        "navigationBarTitleText": "图表"
+      }
+    }, {
+      "path": "pages/bill/bill",
+      "style": {
+        "navigationBarTitleText": "账单"
+      }
+    }, {
+      "path": "pages/user/user",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    }, {
+      "path": "pages/category/list"
+    }, {
+      "path": "pages/category/add",
+      "style": {
+        "navigationBarTitleText": "分类编辑"
+      }
+    }, {
+      "path": "pages/account/list",
+      "style": {
+        "navigationBarTitleText": "账户管理"
+      }
+    }, {
+      "path": "pages/account/add",
+      "style": {
+        "navigationBarTitleText": "账户编辑"
+      }
+    }, {
+      "path": "pages/icon/icon",
+      "style": {
+        "navigationBarTitleText": "图标选择"
+      }
+    }, {
+      "path": "pages/search/search",
+      "style": {
+        "navigationBarTitleText": "搜索"
+      }
+    }, {
+      "path": "pages/claim/claim",
+      "style": {
+        "navigationBarTitleText": "报销管理"
+      }
+    }, {
+      "path": "pages/check/check",
+      "style": {
+        "navigationBarTitleText": "核账记录"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#007AFF",
+    "borderStyle": "black",
+    "backgroundColor": "#F8F8F8",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/images/detail.png",
+        "selectedIconPath": "static/images/detailHL.png",
+        "text": "明细"
+      },
+      {
+        "pagePath": "pages/chart/chart",
+        "iconPath": "static/images/chart.png",
+        "selectedIconPath": "static/images/chartHL.png",
+        "text": "图表"
+      },
+      {
+        "pagePath": "pages/index/add",
+        "iconPath": "static/images/add.png",
+        "selectedIconPath": "static/images/addHL.png",
+        "text": "记账"
+      },
+      {
+        "pagePath": "pages/bill/bill",
+        "iconPath": "static/images/bill.png",
+        "selectedIconPath": "static/images/billHL.png",
+        "text": "账单"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "iconPath": "static/images/account.png",
+        "selectedIconPath": "static/images/accountHL.png",
+        "text": "我的"
+      }
+    ]
+  }
+}

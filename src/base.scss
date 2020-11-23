@@ -1,0 +1,25 @@
+page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+  Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei',
+  sans-serif;
+}
+.button-wrap {
+  width: 700px;
+  & button {
+    margin: 25px 0;
+  }
+}
+.hover {
+  background-color: $uni-bg-color-hover;
+}
+
+/* start--iPhoneX底部安全区定义--start */
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+//@media (prefers-color-scheme: dark){
+//  page {
+//    background-color: #1B1C1E;
+//    color: white;
+//  }
+//}

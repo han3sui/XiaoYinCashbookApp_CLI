@@ -1,0 +1,150 @@
+<template>
+  <view class="cell-item" hover-class="hover">
+    <view class="cell-item__container">
+      <view class="cell-item__left">
+        <view v-if="icon" class="cell-item__left-icon">
+          <base-icon :name="icon" :title="title"/>
+        </view>
+        <view class="cell-item__left-title">
+          <text>{{ title }}</text>
+          <text class="remark" v-if="remark">{{remark}}</text>
+        </view>
+      </view>
+      <view class="cell-item__right">
+        <view v-if="note" class="cell-item__right-note">
+          <text>{{ note }}</text>
+        </view>
+        <view v-if="balance!==null" class="cell-item__right-balance">
+          <text :class="[(balance>=0)?'cell-item__right-balance-income':'cell-item__right-balance-out']">{{ $util.formatMoney(balance) }}</text>
+        </view>
+        <view v-if="arrow" class="cell-item__right-arrow">
+          <base-icon name="arrow-right"/>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import BaseIcon from './BaseIcon'
+export default {
+  name: 'BaseCellItem',
+  components: { BaseIcon },
+  props: {
+    // 标题
+    title: {
+      type: String,
+      require: ''
+    },
+    // 右侧箭头
+    arrow: {
+      type: Boolean,
+      default: false
+    },
+    // 右侧提示
+    note: {
+      type: String,
+      default: ''
+    },
+    // 金额余额
+    balance: {
+      type: Number,
+      default: null
+    },
+    // 图标
+    icon: {
+      type: String,
+      default: ''
+    },
+    // 标题下方提示
+    remark: {
+      type: String,
+      default: ''
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+.cell-item {
+  padding-left: 30px;
+  padding-right: 30px;
+  &__container{
+    display: flex;
+    flex-direction: row;
+    height: 80px;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    font-size: $uni-font-size-base;
+    padding: 8px 0;
+    & text {
+      color: #3b4144;
+    }
+    &:after {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      height: 1px;
+      content: "";
+      -webkit-transform: scaleY(.5);
+      transform: scaleY(.5);
+      background-color: #e5e5e5
+    }
+  }
+  &__left{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    &-icon{
+      width: 50px;
+      height: 50px;
+      margin-right: 18px;
+      overflow: hidden;
+    }
+    &-title{
+      display: flex;
+      flex-direction: column;
+      .remark{
+        margin-top: 6px;
+        color: #999;
+        font-size: 24px;
+        overflow: hidden;
+      }
+    }
+  }
+  &__right{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    &-note{
+      font-size: 24px;
+      & text {
+        color: #999
+      }
+    }
+    &-balance{
+      font-family: Avenir, Helvetica, Arial, sans-serif;
+      font-size: 30px;
+      font-weight: 600;
+      &-income{
+        color: #4cd964 !important;
+      }
+      &-out{
+        color: #dd524d !important;
+      }
+    }
+    &-arrow{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .iconfont {
+        font-size: 30px;
+      }
+    }
+  }
+}
+</style>
