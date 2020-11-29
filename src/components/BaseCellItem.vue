@@ -6,13 +6,13 @@
           <base-icon :name="icon" :title="title"/>
         </view>
         <view class="cell-item__left-title">
-          <text>{{ title }}</text>
+          <text class="title">{{ title }}</text>
           <text class="remark" v-if="remark">{{remark}}</text>
         </view>
       </view>
       <view class="cell-item__right">
         <view v-if="note" class="cell-item__right-note">
-          <text>{{ note }}</text>
+          <text class="note">{{ note }}</text>
         </view>
         <view v-if="balance!==null" class="cell-item__right-balance">
           <text :class="[(balance>=0)?'cell-item__right-balance-income':'cell-item__right-balance-out']">{{ $util.formatMoney(balance) }}</text>
@@ -78,7 +78,7 @@ export default {
     position: relative;
     font-size: $uni-font-size-base;
     padding: 8px 0;
-    & text {
+    .title {
       color: #3b4144;
     }
     &:after {
@@ -122,7 +122,7 @@ export default {
     justify-content: center;
     &-note{
       font-size: 24px;
-      & text {
+      .note {
         color: #999
       }
     }

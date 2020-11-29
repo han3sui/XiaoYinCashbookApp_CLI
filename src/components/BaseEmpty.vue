@@ -1,7 +1,7 @@
 <template>
   <view class="base-empty">
     <base-icon :name="name" color="#c0c4cc" :size="Number(size)"/>
-    <text :style="{fontSize:Number(fontSize)+'rpx'}">暂无数据</text>
+    <text class="base-empty-text" :style="{fontSize:Number(fontSize)+'rpx'}">暂无数据</text>
   </view>
 </template>
 
@@ -38,7 +38,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 60vh;
-  & text{
+  &-text{
     color: #c0c4cc;
     margin-top: 20px;
   }

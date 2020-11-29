@@ -34,7 +34,7 @@
             </view>
             <view class="keyboard-meta-remark">
               <base-icon name="remark" color="#808080"/>
-              <input v-model="detailData.remark" placeholder="点击备注" placeholder-style="font-size:28rpx"/>
+              <input class="keyboard-meta-remark-input" v-model="detailData.remark" placeholder="点击备注" placeholder-style="font-size:28rpx"/>
             </view>
           </view>
           <view class="keyboard-meta-money">
@@ -49,19 +49,19 @@
             </view>
           </view>
           <view class="keyboard-menu">
-            <view class="keyboard-menu-date">
-              <picker mode="date" :value="detailData.time" :start="dateStart" :end="dateEnd" @change="handleChangeDate">
-                <text>{{detailData.time}}</text>
+            <view class="keyboard-menu-view keyboard-menu-date">
+              <picker class="picker" mode="date" :value="detailData.time" :start="dateStart" :end="dateEnd" @change="handleChangeDate">
+                <text class="picker-text">{{detailData.time}}</text>
               </picker>
             </view>
-            <view class="keyboard-menu-account">
-              <picker v-if="detailData.direction!==3" class="left-account" mode="selector" :value="accountIndex" :range="accountList" range-key="name" @change="handleChangeAccount">
-                <text>{{accountList[accountIndex].name}}</text>
+            <view class="keyboard-menu-view keyboard-menu-account">
+              <picker class="picker left-account" v-if="detailData.direction!==3" mode="selector" :value="accountIndex" :range="accountList" range-key="name" @change="handleChangeAccount">
+                <text class="picker-text">{{accountList[accountIndex].name}}</text>
               </picker>
               <text v-else>-</text>
             </view>
-            <view class="keyboard-menu-button" @tap="handleSave">
-              <text>完成</text>
+            <view class="keyboard-menu-view keyboard-menu-button" @tap="handleSave">
+              <text class="keyboard-menu-button-text">完成</text>
             </view>
           </view>
         </view>
@@ -425,7 +425,7 @@ export default {
         line-height: 28px;
         text-align: left;
         padding-left: 10px;
-        & input{
+        &-input{
           padding-left: 10px;
         }
       }
@@ -470,7 +470,7 @@ export default {
       flex-direction: column;
       width: 25%;
       overflow: hidden;
-      & view{
+      &-view{
         display: flex;
         height: 80px;
         background-color: #fff;
@@ -481,13 +481,13 @@ export default {
         &:active{
           background-color: #EEEEEE;
         }
-        & picker{
+        .picker{
           display: flex;
           align-items: center;
           justify-content: center;
           width: 100%;
           height: 100%;
-          & text{
+          .picker-text{
             display: flex;
             align-items: center;
             justify-content: center;
@@ -504,7 +504,7 @@ export default {
         &:active{
           background-color: #6495ED !important;
         }
-        & text{
+        &-text{
           color: #FFFFFF;
           font-size: 28px !important;
           font-weight: bold;

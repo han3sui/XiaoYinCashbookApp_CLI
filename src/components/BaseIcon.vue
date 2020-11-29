@@ -2,8 +2,8 @@
   <view class="body">
     <template v-if="isImg">
       <view class="icon-wrap">
-        <text v-if="name.indexOf('icon-define.png')!==-1">{{title.substr(0,1)}}</text>
-        <img :style="[imgStyle]" alt="" :src="name"/>
+        <text class="icon-wrap-text" v-if="name.indexOf('icon-define.png')!==-1">{{title.substr(0,1)}}</text>
+        <img class="icon-wrap-img" :style="[imgStyle]" alt="" :src="name"/>
       </view>
     </template>
     <template v-else>
@@ -94,11 +94,11 @@ export default {
     position: relative;
     width: 100%;
     height: 100%;
-    & img{
+    &-img{
       width: 100%;
       height: 100%;
     }
-    & text{
+    &-text{
       position: absolute;
       color: #FFFFFF;
       font-size: 24px;
