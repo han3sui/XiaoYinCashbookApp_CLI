@@ -15,9 +15,9 @@ export function request (api, method = 'GET', params = {}, header = {}) {
     !header['content-type'] && (header['content-type'] = 'application/json')
     let requestUrl
     if (process.env.NODE_ENV === 'development') {
-      requestUrl = 'http://dev.hanyin.info'
+      requestUrl = 'http://10.0.0.101:8199'
     } else {
-      requestUrl = 'https://cashbook.hanyin.info'
+      requestUrl = 'https://cashbook.han3sui.com'
     }
     const token = store.state.token || uni.getStorageSync('token')
     token && (header.Authorization = `Bearer ${token}`)

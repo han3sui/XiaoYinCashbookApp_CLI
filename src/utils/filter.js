@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
  * @returns {string}
  */
 export function getIconUrl (name) {
-  return `https://static.hanyin.info/icon/${name}.png`
+  return `https://cdn.han3sui.com/icon/${name}.png`
 }
 
 /**
