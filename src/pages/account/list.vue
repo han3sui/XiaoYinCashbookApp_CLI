@@ -43,9 +43,9 @@
 import BaseCell from '../../components/BaseCell.vue'
 import BaseCellItem from '../../components/BaseCellItem.vue'
 import * as account from '../../apis/account.js'
-import { updateCheckTime } from '../../apis/user'
-import { isExistUnchek } from '../../apis/detail'
-import { initAccount } from '../../utils/apis'
+import { updateCheckTime } from '@/apis/user'
+import { isExistUnchek } from '@/apis/detail'
+import { initAccount } from '@/utils/apis'
 
 export default {
   data () {
@@ -131,26 +131,35 @@ export default {
     // 编辑账户
     handleEdit (item) {
       uni.showActionSheet({
-        itemList: ['编辑账户', '删除账户'],
+        itemList: ['查看明细', '编辑账户', '删除账户'],
         success: (e) => {
           switch (e.tapIndex) {
             case 0:
               uni.navigateTo({
-                url: '/pages/account/add?item=' + encodeURIComponent(JSON.stringify(item))
+                url: '/pages/search/search?params=' + encodeURIComponent(JSON.stringify({
+                  account_id: item.id
+                }))
               })
               break
             case 1:
-              uni.showModal({
-                title: '提示',
-                content: '该操作将删除账户关联的账单明细 , 请慎重操作 !',
-                success: async (res) => {
-                  if (res.confirm) {
-                    await account.del(item.id)
-                    this.$util.toastSuccess('删除成功')
-                    await this.initAccountList()
-                    await initAccount(true)
+              uni.navigateTo({
+                url: '/pages/account/add?item=' + encodeURIComponent(JSON.stringify(item))
+              })
+              break
+            case 2:
+              account.getAccountDetailCount(item.id).then(res => {
+                uni.showModal({
+                  title: '提示',
+                  content: `该操作将删除账户关联的 ${res} 条账单明细 , 请慎重操作！`,
+                  success: async (res) => {
+                    if (res.confirm) {
+                      await account.del(item.id)
+                      this.$util.toastSuccess('删除成功')
+                      await this.initAccountList()
+                      await initAccount(true)
+                    }
                   }
-                }
+                })
               })
               break
             default:
@@ -172,10 +181,9 @@ export default {
               all_surplus: this.all_surplus,
               list: this.list
             }
-            const checkTime = await updateCheckTime({
+            this.$store.state.userInfo.checkTime = await updateCheckTime({
               data: JSON.stringify(data)
             })
-            this.$store.state.userInfo.checkTime = checkTime
             this.checkStatus = 1
           }
         }

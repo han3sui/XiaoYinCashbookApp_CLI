@@ -162,7 +162,9 @@ export function formatMoney (amount, decimalCount = 2, decimal = '.', thousands 
     }
     let decimal = ''
     if (amountArr.length > 1) {
-      decimal = '.' + amountArr[1]
+      decimal = amountArr[1].length === 2 ? `.${amountArr[1]}` : `.${amountArr[1]}0`
+    } else {
+      decimal = '.00'
     }
     return `${negativeSign}${main}${decimal}`
   } catch (e) {

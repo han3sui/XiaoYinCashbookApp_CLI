@@ -1,6 +1,6 @@
 import store from '../store/index.js'
 import { loading, hideLoading, random, toastError } from './util'
-import { login } from '../apis/user'
+import { login } from '@/apis/user'
 
 // 标记是否正在刷新token
 let isRefreshing = false

@@ -13,6 +13,16 @@ export function manageList () {
 }
 
 /**
+ * 获取账户关联明细条数
+ * @param id，账户ID
+ * @returns {Promise<unknown>}
+ */
+export function getAccountDetailCount (id) {
+  const link = `${url}/details/count/${id}`
+  return request(link, 'GET')
+}
+
+/**
  * 获取账户列表
  * @returns {Promise | Promise<unknown>}
  */
