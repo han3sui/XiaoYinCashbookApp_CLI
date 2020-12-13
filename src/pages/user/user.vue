@@ -65,7 +65,7 @@
       </view>
       <view class="cell-wrap">
         <base-cell>
-          <base-cell-item title='当前版本' note="v1.0.7"/>
+          <base-cell-item title='当前版本' note="v1.1.1"/>
         </base-cell>
       </view>
     </view>
