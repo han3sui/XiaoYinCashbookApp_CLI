@@ -1,19 +1,16 @@
-# unitest
+# 小音记账客户端
 
-## Project setup
-```
-npm install
-```
+## 基于uni-app制作，目前支持微信小程序
 
-### Compiles and hot-reloads for development
+### 运行
+
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### 发布
+
 ```
 npm run build
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
