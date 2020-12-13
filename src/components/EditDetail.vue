@@ -51,12 +51,12 @@
           <view class="keyboard-menu">
             <view class="keyboard-menu-view keyboard-menu-date">
               <picker class="picker" mode="date" :value="detailData.time" :start="dateStart" :end="dateEnd" @change="handleChangeDate">
-                <text class="picker-text">{{detailData.time}}</text>
+                <view class="picker-text">{{detailData.time}}</view>
               </picker>
             </view>
             <view class="keyboard-menu-view keyboard-menu-account">
               <picker class="picker left-account" v-if="detailData.direction!==3" mode="selector" :value="accountIndex" :range="accountList" range-key="name" @change="handleChangeAccount">
-                <text class="picker-text">{{accountList[accountIndex].name}}</text>
+                <view class="picker-text">{{accountList[accountIndex].name}}</view>
               </picker>
               <text v-else>-</text>
             </view>
@@ -471,34 +471,27 @@ export default {
       width: 25%;
       overflow: hidden;
       &-view{
-        display: flex;
         height: 80px;
         background-color: #fff;
         border-radius: 10px;
-        align-items: center;
-        justify-content: center;
         margin: 10px;
         &:active{
           background-color: #EEEEEE;
         }
         .picker{
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          height: 100%;
           .picker-text{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
+            flex: 1;
+            text-align: center;
+            line-height: 80px;
             font-size: 24px;
             font-weight: 400;
           }
         }
       }
       .keyboard-menu-button{
+        display: flex;
+        align-items: center;
+        justify-content: center;
         height: 180px !important;
         background-color: #007AFF !important;
         &:active{
