@@ -1,6 +1,6 @@
 import store from '../store/index.js'
 import * as util from '../utils/util'
-import { login, info } from '../apis/user.js'
+import { login, info } from '@/apis/user'
 import { list as categoryList } from '../apis/category'
 import { list as accountList } from '../apis/account'
 
