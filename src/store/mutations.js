@@ -13,11 +13,19 @@ const mutations = {
   SET_ACCOUNT (state, res) {
     state.account = res
   },
+  ADD_CHANGE_DETAIL (state, res) {
+    state.changeDetails.push(res)
+  },
+  CLEAR_CHANGE_DETAIL (state) {
+    state.changeDetails = []
+  },
   CLEAR_VUEX (state) {
     if (state.initState && typeof state.initState === 'function') {
       const initState = state.initState()
       for (const key in initState) {
-        state[key] = initState[key]
+        if (Object.prototype.hasOwnProperty.call(initState, key)) {
+          state[key] = initState[key]
+        }
       }
     }
   }

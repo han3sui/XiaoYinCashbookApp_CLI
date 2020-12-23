@@ -12,7 +12,9 @@ const defaultState =
     // 分类信息
     category: {},
     // 账户信息
-    account: []
+    account: [],
+    // 更改的明细
+    changeDetails: []
   }
 const state = {
   ...defaultState,

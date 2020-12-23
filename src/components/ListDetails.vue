@@ -1,85 +1,71 @@
 <template>
   <view class="body">
-    <view class="detail-wrap" v-for="(item,index) in list" :key="index">
-      <view class="detail-meta">
-        <text class="detail-meta-date">{{ item.time }} {{ $util.getWeekDay(item.time) }}</text>
-        <view>
-          <text class="detail-meta-money" v-if="item.out>0">支出 : {{ $util.formatMoney(item.out) }}</text>
-          <text class="detail-meta-money" v-if="item.income > 0" style="margin-left: 5px">收入 : {{ $util.formatMoney(item.income) }}
-          </text>
+    <!--    空状态-->
+    <base-empty v-if="JSON.stringify(list)==='{}' && loadStatus!=='loading' && loadStatus!=='error'"/>
+    <!--    信息流主体-->
+    <template v-else>
+      <view class="detail-wrap" v-for="(item,index) in list" :key="index">
+        <view class="detail-meta">
+          <text class="detail-meta-date">{{ item.time }} {{ $util.getWeekDay(item.time) }}</text>
+          <view>
+            <text class="detail-meta-money" v-if="item.out>0">支出 : {{ $util.formatMoney(item.out) }}</text>
+            <text class="detail-meta-money" v-if="item.income > 0" style="margin-left: 5px">收入 : {{ $util.formatMoney(item.income) }}
+            </text>
+          </view>
         </view>
-      </view>
-      <view class="detail-content">
-        <view :style="{'textDecoration':v.claim===2?'line-through':''}" class="detail-item" hover-class="hover"
-              v-for="(v,i) in item.list" :key="i" @tap="handleEdit(v,i)">
-          <view class="detail-item-info">
-            <base-icon class="detail-item-info-thumb"
-                       :name="(v.direction===3?v.account.icon:v.category.icon)|getIconUrl"
-                       :title="v.direction===3?v.account.name:v.category.name"/>
-            <view class="detail-item-info-wrap">
-              <text v-if="v.claim===0" class="detail-item-info-wrap-name">
-                {{ v.direction === 3 ? '内部转账' : v.category.name }}
-              </text>
-              <text v-else class="detail-item-info-wrap-name">{{ `报销 · ${v.category.name}` }}</text>
-              <text class="detail-item-info-wrap-remark" v-if="v.remark">{{ v.remark }}</text>
-              <text class="detail-item-info-wrap-other"
-                    :class="[checkTime>v.update_time?'':'detail-item-info-wrap-other__nocheck']">
-                {{
-                  (checkTime > v.update_time ? '已核账' : '待核账') + ' · ' + v.account.name + (v.income_account.name ? ('->' + v.income_account.name) : '')
-                }}
-              </text>
+        <view class="detail-content">
+          <view :style="{'textDecoration':v.claim===2?'line-through':''}" class="detail-item" hover-class="hover"
+                v-for="(v,i) in item.list" :key="i" @tap="handleEdit(v,i)">
+            <view class="detail-item-info">
+              <base-icon class="detail-item-info-thumb"
+                         :name="(v.direction===3?v.account.icon:v.category.icon)|getIconUrl"
+                         :title="v.direction===3?v.account.name:v.category.name"/>
+              <view class="detail-item-info-wrap">
+                <text v-if="v.claim===0" class="detail-item-info-wrap-name">
+                  {{ v.direction === 3 ? '内部转账' : v.category.name }}
+                </text>
+                <text v-else class="detail-item-info-wrap-name">{{ `报销 · ${v.category.name}` }}</text>
+                <text class="detail-item-info-wrap-remark" v-if="v.remark">{{ v.remark }}</text>
+                <text class="detail-item-info-wrap-other"
+                      :class="[checkTime>v.update_time?'':'detail-item-info-wrap-other__nocheck']">
+                  {{
+                    (checkTime > v.update_time ? '已核账' : '待核账') + ' · ' + v.account.name + (v.income_account.name ? ('->' + v.income_account.name) : '')
+                  }}
+                </text>
+              </view>
+            </view>
+            <view class="detail-item-money"
+                  :class="[v.direction===1?'detail-item-money__income':v.direction===2?'detail-item-money__out':'detail-item-money__other']">
+              {{ v.direction === 2 ? '-' : '' }}{{ $util.formatMoney(v.money) }}
             </view>
           </view>
-          <view class="detail-item-money"
-                :class="[v.direction===1?'detail-item-money__income':v.direction===2?'detail-item-money__out':'detail-item-money__other']">
-            {{ v.direction === 2 ? '-' : '' }}{{ $util.formatMoney(v.money) }}
-          </view>
         </view>
       </view>
-    </view>
-<!--    加载状态-->
-    <base-load-more :status="loadStatus" icon-type="flower"/>
-<!--    <slot/>-->
+      <!--    加载状态-->
+      <base-load-more :status="loadStatus" icon-type="flower" @retry="retry"/>
+    </template>
   </view>
 </template>
 
 <script>
 import BaseIcon from './BaseIcon'
-import * as detail from '../apis/detail'
+import { search as detailSearch, del as detailDel } from '../apis/detail'
 import BaseLoadMore from '@/components/BaseLoadMore'
+import BaseEmpty from '@/components/BaseEmpty'
 
 export default {
   name: 'ListDetails',
-  components: { BaseLoadMore, BaseIcon },
+  components: { BaseEmpty, BaseLoadMore, BaseIcon },
   props: {
-    // 明细数组
-    // list: {
-    //   type: Object,
-    //   default: function () {
-    //     return {}
-    //   }
-    // },
     // 搜索条件
     params: {
       type: Object,
-      default () {
-        return {
-          // 年份
-          year: 0,
-          // 月份
-          month: 0,
-          // 账户ID
-          account_id: 0,
-          // 分类ID
-          category_id: 0,
-          // 备注
-          remark: '',
-          // 当前页
-          page_no: 0,
-          // 分页条数
-          page_size: 20
-        }
-      }
+      detail: {}
+    },
+    // 是否加载更多
+    loadmore: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -87,36 +73,57 @@ export default {
       // 加载状态，支持：loading/finished/error/loadmore
       loadStatus: '',
       // 数据明细
-      list: {}
+      list: {},
+      // 分页条件
+      paging: {
+        // 当前页
+        page_no: 0,
+        // 分页条数
+        page_size: 20
+      }
     }
   },
   computed: {
     // 最后核账时间
     checkTime () {
       return this.$store.state.userInfo.checkTime
+    },
+    // 待更新明细列表
+    changeDetails () {
+      return this.$store.state.changeDetails
     }
   },
   watch: {
     params () {
-      this.listByParams()
+      this.listByParams(true)
+    },
+    loadmore (e) {
+      if (e) {
+        this.listByParams()
+      }
+    },
+    changeDetails: {
+      handler: function (list) {
+        console.log(list)
+      },
+      immediate: true
     }
   },
-  mounted () {
-    this.listByParams()
-  },
   methods: {
+    // 根据查询条件查询
     listByParams (refresh = false) {
       if (refresh) {
-        this.params.page_no = 0
+        this.paging.page_no = 0
         this.list = {}
       } else if (this.loadStatus === 'loading' || this.loadStatus === 'error' || this.loadStatus === 'finished') {
         return
       }
       this.loadStatus = 'loading'
-      this.params.page_no = this.params.page_no + 1
-      detail.search(this.params).then(res => {
+      this.paging.page_no = this.paging.page_no + 1
+      detailSearch({ ...this.params, ...this.paging }).then(res => {
+        this.$emit('update:loadmore', false)
         this.loadStatus = ''
-        if (res.length < this.params.page_size) {
+        if (res.length < this.paging.page_size) {
           this.loadStatus = 'finished'
         }
         res.forEach(item => {
@@ -141,6 +148,12 @@ export default {
         this.loadStatus = 'error'
       })
     },
+    // 出错之后，点击重新加载
+    retry () {
+      this.paging.page_no = this.paging.page_no - 1
+      this.loadStatus = ''
+      this.listByParams()
+    },
     // 触发编辑
     handleEdit (item, index) {
       uni.showActionSheet({
@@ -158,7 +171,7 @@ export default {
                 content: '请确认是否要删除该条明细',
                 success: (res) => {
                   if (res.confirm) {
-                    detail.del(item.id).then(() => {
+                    detailDel(item.id).then(() => {
                       this.$delete(this.list[item.time].list, index)
                       if (!this.list[item.time].list.length) {
                         this.$delete(this.list, item.time)

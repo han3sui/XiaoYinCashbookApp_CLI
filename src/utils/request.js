@@ -15,7 +15,8 @@ export function request (api, method = 'GET', params = {}, header = {}) {
     !header['content-type'] && (header['content-type'] = 'application/json')
     let requestUrl
     if (process.env.NODE_ENV === 'development') {
-      requestUrl = 'http://10.0.0.101:8199'
+      // requestUrl = 'http://10.0.0.101:8199'
+      requestUrl = 'http://192.168.1.11:8199'
     } else {
       requestUrl = 'https://cashbook.han3sui.com'
     }

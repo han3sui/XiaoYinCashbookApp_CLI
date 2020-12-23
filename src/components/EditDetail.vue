@@ -75,7 +75,7 @@ import BaseIcon from '../components/BaseIcon'
 import BaseSubsection from './BaseSubsection'
 import BasePopup from './BasePopup'
 import * as detail from '../apis/detail'
-import { getDate } from '../utils/util'
+import { getDate } from '@/utils/util'
 
 export default {
   name: 'EditDetail',
@@ -376,7 +376,8 @@ export default {
         this.detailData.claim = 0
       }
       if (!this.detail.id) {
-        await detail.save(this.detailData)
+        const res = await detail.save(this.detailData)
+        this.$store.commit('ADD_CHANGE_DETAIL', res)
         this.$util.toastSuccess('保存成功')
         Object.assign(this.detailData, {
           money: 0,
@@ -384,7 +385,8 @@ export default {
         })
         this.keyboardShow = false
       } else {
-        await detail.update(this.detail.id, this.detailData)
+        const res = await detail.update(this.detail.id, this.detailData)
+        this.$store.commit('ADD_CHANGE_DETAIL', res)
         uni.navigateBack()
       }
     },

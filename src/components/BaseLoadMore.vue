@@ -2,7 +2,7 @@
   <view class="base-load-more">
     <base-loading :show="status==='loading'" :mode="iconType">加载中...</base-loading>
     <view v-if="status==='finished'" class="base-load-more__custom">没有更多了</view>
-    <view v-if="status==='error'" class="base-load-more__custom">加载失败，点击重试</view>
+    <view v-if="status==='error'" class="base-load-more__custom" @tap="retry">加载失败，点击重试</view>
   </view>
 </template>
 
@@ -21,6 +21,11 @@ export default {
     status: {
       type: String,
       default: 'loading'
+    }
+  },
+  methods: {
+    retry () {
+      this.$emit('retry')
     }
   }
 }
