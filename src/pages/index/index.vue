@@ -22,8 +22,11 @@
       </view>
     </view>
     <scroll-view scroll-y class="content">
-      <list-details v-if="data.length>0" :list="data" @refresh="listByParams()"/>
-      <base-empty v-else/>
+      <list-details/>
+<!--      <base-empty v-if="JSON.stringify(data)==='{}' && loadStatus!=='loading' && loadStatus!=='error'"/>-->
+<!--      <list-details v-else :list="data" @refresh="listByParams(true)">-->
+<!--        <base-load-more :status="loadStatus" icon-type="flower"/>-->
+<!--      </list-details>-->
     </scroll-view>
   </view>
 </template>
@@ -33,13 +36,14 @@ import * as detail from '../../apis/detail'
 import ListDetails from '../../components/ListDetails'
 import BaseIcon from '../../components/BaseIcon'
 import BaseEmpty from '../../components/BaseEmpty'
+import BaseLoadMore from '@/components/BaseLoadMore'
 
 export default {
-  components: { BaseEmpty, BaseIcon, ListDetails },
+  components: { BaseLoadMore, BaseEmpty, BaseIcon, ListDetails },
   data () {
     return {
       // 明细列表
-      data: [],
+      data: {},
       // 总支出
       totalOut: 0,
       // 总收入
@@ -54,8 +58,12 @@ export default {
         month: 0,
         account_id: 0,
         category_id: 0,
-        remark: ''
-      }
+        remark: '',
+        page_no: 0,
+        page_size: 20
+      },
+      // 加载状态，支持：loading/finished/error/loadmore
+      loadStatus: ''
     }
   },
   computed: {
@@ -83,26 +91,54 @@ export default {
   },
   methods: {
     // 根据查询条件请求
-    async listByParams () {
-      this.params = Object.assign({}, this.params, {
-        year: this.date.split('-')[0],
-        month: this.date.split('-')[1],
-        account_id: this.accountList[this.accountIndex].id
+    listByParams (refresh = false) {
+      if (refresh) {
+        this.params.page_no = 1
+        this.data = {}
+      } else if (this.loadStatus === 'loading' || this.loadStatus === 'error' || this.loadStatus === 'finished') {
+        return
+      }
+      this.loadStatus = 'loading'
+      this.params.year = this.date.split('-')[0]
+      this.params.month = this.date.split('-')[1]
+      this.params.account_id = this.accountList[this.accountIndex].id
+      this.params.page_no = this.params.page_no + 1
+      detail.search(this.params).then(res => {
+        this.loadStatus = ''
+        if (res.length < this.params.page_size) {
+          this.loadStatus = 'finished'
+        }
+        res.forEach(item => {
+          if (!this.data[item.time]) {
+            this.$set(this.data, item.time, {
+              time: item.time,
+              income: item.direction === 1 ? item.money : 0,
+              out: item.direction === 2 ? item.money : 0,
+              list: [item]
+            })
+          } else {
+            if (item.direction === 1) {
+              this.data[item.time].income = this.$util.floatAdd(this.data[item.time].income, item.money)
+            }
+            if (item.direction === 2) {
+              this.data[item.time].out = this.$util.floatAdd(this.data[item.time].out, item.money)
+            }
+            this.data[item.time].list.push(item)
+          }
+        })
+      }).catch(() => {
+        this.loadStatus = 'error'
       })
-      const res = await detail.search(this.params)
-      this.data = res.data
-      this.totalIncome = res.total_income
-      this.totalOut = res.total_out
     },
     // 更改时间picker
     handleChangeDate (e) {
       this.date = e.target.value
-      this.listByParams()
+      this.listByParams(true)
     },
     // 更改显示账户
     handleChangeAccount (e) {
       this.accountIndex = e.target.value
-      this.listByParams()
+      this.listByParams(true)
     },
     // 前往搜索页
     handleToSearch () {

@@ -58,7 +58,7 @@
               <picker class="picker left-account" v-if="detailData.direction!==3" mode="selector" :value="accountIndex" :range="accountList" range-key="name" @change="handleChangeAccount">
                 <view class="picker-text">{{accountList[accountIndex].name}}</view>
               </picker>
-              <text v-else>-</text>
+              <view class="picker-none" v-else>-</view>
             </view>
             <view class="keyboard-menu-view keyboard-menu-button" @tap="handleSave">
               <text class="keyboard-menu-button-text">完成</text>
@@ -471,12 +471,20 @@ export default {
       width: 25%;
       overflow: hidden;
       &-view{
+        position: relative;
         height: 80px;
         background-color: #fff;
         border-radius: 10px;
         margin: 10px;
         &:active{
           background-color: #EEEEEE;
+        }
+        .picker-none{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          width: 100%;
         }
         .picker{
           .picker-text{

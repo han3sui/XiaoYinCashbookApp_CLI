@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import Big from 'big.js'
 /**
  * 加载loading
  * @param title
@@ -182,4 +183,27 @@ export function formatMoney (amount, decimalCount = 2, decimal = '.', thousands 
   // } catch (e) {
   //   console.log(e)
   // }
+}
+
+/**
+ * 浮点数据加法
+ * @param num1
+ * @param num2
+ * @param point
+ * @returns {*}
+ */
+export function floatAdd (num1, num2, point = 2) {
+  Big.DP = point
+  return new Big(num1).add(new Big(num2)).toNumber()
+}
+
+/**
+ * 浮点数据减法
+ * @param num1
+ * @param num2
+ * @param point
+ */
+export function floatSub (num1, num2, point = 2) {
+  Big.DP = point
+  return new Big(num1).sub(new Big(num2)).toNumber()
 }

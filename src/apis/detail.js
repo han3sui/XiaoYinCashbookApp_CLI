@@ -8,6 +8,7 @@ const url = '/api/v2/details'
  */
 export function search (params = {}) {
   const link = `${url}`
+  params._loading = false
   return request(link, 'GET', params)
 }
 

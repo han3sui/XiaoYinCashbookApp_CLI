@@ -48,6 +48,7 @@
     "@dcloudio/uni-quickapp-native": "^2.0.0-29320201014001",
     "@dcloudio/uni-quickapp-webview": "^2.0.0-29820201110001",
     "@dcloudio/uni-stat": "^2.0.0-29820201110001",
+    "big.js": "^6.0.3",
     "core-js": "^3.8.1",
     "dayjs": "^1.9.7",
     "flyio": "^0.6.2",

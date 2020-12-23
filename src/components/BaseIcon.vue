@@ -7,7 +7,7 @@
       </view>
     </template>
     <template v-else>
-      <view class="base-icon" :class="[`base-icon-${name}`]" :style="[iconStyle]"/>
+      <text class="base-icon" :class="[`base-icon-${name}`,loading?'loading-animation':'']" :style="[iconStyle]"/>
       <text :style="[labelStyle]" v-if="label">{{label}}</text>
     </template>
   </view>
@@ -27,7 +27,7 @@ export default {
       type: String,
       default: ''
     },
-    // icon大小
+    // icon大小，单位rpx
     size: {
       type: [Number, String],
       default: 'inherit'
@@ -50,12 +50,8 @@ export default {
     iconStyle () {
       let style = {}
       style = {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         fontSize: this.size === 'inherit' ? this.size : `${this.size}rpx`,
-        width: `${this.size}rpx`,
-        height: `${this.size}rpx`
+        lineHeight: this.size === 'inherit' ? this.size : `${this.size}rpx`
       }
       this.color && (style.color = this.color)
       return style
