@@ -4,7 +4,7 @@
     <base-empty v-if="JSON.stringify(list)==='{}' && loadStatus!=='loading' && loadStatus!=='error'"/>
     <!--    信息流主体-->
     <template v-else>
-      <view class="detail-wrap" v-for="(item,index) in list" :key="index">
+      <view class="detail-wrap" v-for="(item,key) in list" :key="key">
         <view class="detail-meta">
           <text class="detail-meta-date">{{ item.time }} {{ $util.getWeekDay(item.time) }}</text>
           <view>
@@ -52,7 +52,6 @@ import BaseIcon from './BaseIcon'
 import { search as detailSearch, del as detailDel } from '../apis/detail'
 import BaseLoadMore from '@/components/BaseLoadMore'
 import BaseEmpty from '@/components/BaseEmpty'
-
 export default {
   name: 'ListDetails',
   components: { BaseEmpty, BaseLoadMore, BaseIcon },
@@ -104,12 +103,50 @@ export default {
     },
     changeDetails: {
       handler: function (list) {
-        console.log(list)
+        if (list.length) {
+          this.handleChangeDetails(list)
+        }
       },
       immediate: true
     }
   },
   methods: {
+    // 从vuex更新明细
+    handleChangeDetails (list) {
+      let needSort = false
+      list.forEach(item => {
+        if (!this.list[item.time]) {
+          this.$set(this.list, item.time, {
+            time: item.time,
+            income: item.direction === 1 ? item.money : 0,
+            out: item.direction === 2 ? item.money : 0,
+            list: [item]
+          })
+          needSort = true
+        } else {
+          if (item.direction === 1) {
+            this.list[item.time].income = this.$util.floatAdd(this.list[item.time].income, item.money)
+          }
+          if (item.direction === 2) {
+            this.list[item.time].out = this.$util.floatAdd(this.list[item.time].out, item.money)
+          }
+          this.list[item.time].list.unshift(item)
+        }
+      })
+      if (needSort) {
+        needSort = false
+        const newKeys = Object.keys(this.list).sort().reverse()
+        const newObj = {}
+        for (const key of newKeys) {
+          newObj[key] = this.list[key]
+        }
+        this.list = {}
+        this.$nextTick(() => {
+          this.list = Object.assign({}, this.list, newObj)
+        })
+      }
+      this.$store.commit('CLEAR_CHANGE_DETAIL', [])
+    },
     // 根据查询条件查询
     listByParams (refresh = false) {
       if (refresh) {
@@ -175,11 +212,9 @@ export default {
                       this.$delete(this.list[item.time].list, index)
                       if (!this.list[item.time].list.length) {
                         this.$delete(this.list, item.time)
-                      }
-                      if (item.direction === 1) {
+                      } else if (item.direction === 1) {
                         this.$set(this.list[item.time], 'income', this.$util.floatSub(this.list[item.time].income, item.money))
-                      }
-                      if (item.direction === 2) {
+                      } else if (item.direction === 2) {
                         this.$set(this.list[item.time], 'out', this.$util.floatSub(this.list[item.time].out, item.money))
                       }
                       this.$util.toastSuccess('删除成功')
