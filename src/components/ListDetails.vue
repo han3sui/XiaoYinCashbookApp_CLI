@@ -114,8 +114,11 @@ export default {
     // 从vuex更新明细
     handleChangeDetails (list) {
       let needSort = false
+      const oldDetail = this.$store.state.editDetailOld
+      console.log('watch', this.list)
       list.forEach(item => {
         if (!this.list[item.time]) {
+          // 当前列表不存在该日期key
           this.$set(this.list, item.time, {
             time: item.time,
             income: item.direction === 1 ? item.money : 0,
@@ -124,13 +127,53 @@ export default {
           })
           needSort = true
         } else {
-          if (item.direction === 1) {
-            this.list[item.time].income = this.$util.floatAdd(this.list[item.time].income, item.money)
+          // 如果存在该日期key
+          if (this.list[item.time].list.findIndex(v => v.id === item.id) === -1) {
+            // 如果该日期下，不存在当前明细，则直接插入（如果存在明细的情况，走更新流程的记账时间是同一天的逻辑）
+            if (item.direction === 1) {
+              this.list[item.time].income = this.$util.floatAdd(this.list[item.time].income, item.money)
+            }
+            if (item.direction === 2) {
+              this.list[item.time].out = this.$util.floatAdd(this.list[item.time].out, item.money)
+            }
+            this.list[item.time].list.unshift(item)
           }
-          if (item.direction === 2) {
-            this.list[item.time].out = this.$util.floatAdd(this.list[item.time].out, item.money)
+        }
+        if (JSON.stringify(oldDetail) !== '{}') {
+          // 如果存在旧数据，表示是编辑更新，需要对列表里的旧数据进行处理
+          if (oldDetail.time === item.time) {
+            // 更新前后的记账时间，是同一天
+            const oldMoney = oldDetail.money
+            if (item.money !== oldMoney) {
+              // 金额发生改动，修改计算的支出、收入值
+              if (item.direction === 1) {
+                this.list[item.time].income = this.$util.floatSub(this.list[item.time].income, this.$util.floatSub(oldMoney, item.money))
+              }
+              if (item.direction === 2) {
+                this.list[item.time].out = this.$util.floatSub(this.list[item.time].out, this.$util.floatSub(oldMoney, item.money))
+              }
+            }
+            const index = this.list[item.time].list.findIndex(v => v.id === item.id)
+            this.list[item.time].list.splice(index, 1, item)
+          } else {
+            // 更新前后的记账时间，不是同一天
+            // 查找旧数据所在的对象位置
+            const index = this.list[oldDetail.time].list.findIndex(v => v.id === item.id)
+            // 删除对象中的旧数据
+            this.$delete(this.list[oldDetail.time].list, index)
+            if (!this.list[oldDetail.time].list.length) {
+              // 删除后，如果该日期下，不存在记账记录，则从object里删除这一天
+              this.$delete(this.list, oldDetail.time)
+            } else if (oldDetail.direction === 1) {
+              // 更改旧对象中的收入计算值
+              this.list[oldDetail.time].income = this.$util.floatSub(this.list[oldDetail.time].income, oldDetail.money)
+            } else if (oldDetail.direction === 2) {
+              // 更改旧对象中的支出计算值
+              this.list[oldDetail.time].out = this.$util.floatSub(this.list[oldDetail.time].out, oldDetail.money)
+            }
           }
-          this.list[item.time].list.unshift(item)
+          // 清空vuex里的编辑明细数据
+          this.$store.commit('SET_EDIT_DETAIL', {})
         }
       })
       if (needSort) {
@@ -181,6 +224,7 @@ export default {
             this.list[item.time].list.push(item)
           }
         })
+        console.log('search', this.list)
       }).catch(() => {
         this.loadStatus = 'error'
       })
@@ -211,6 +255,7 @@ export default {
                     detailDel(item.id).then(() => {
                       this.$delete(this.list[item.time].list, index)
                       if (!this.list[item.time].list.length) {
+                        // 删除后，如果该日期下，不存在记账记录，则从object里删除这一天
                         this.$delete(this.list, item.time)
                       } else if (item.direction === 1) {
                         this.$set(this.list[item.time], 'income', this.$util.floatSub(this.list[item.time].income, item.money))

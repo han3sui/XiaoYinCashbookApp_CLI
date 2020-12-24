@@ -370,24 +370,30 @@ export default {
       this.detailData.money = money
     },
     // 保存账单
-    async handleSave () {
+    handleSave () {
       this.detailData.money = Number(this.detailData.money)
       if (this.detailData.direction !== 2) {
         this.detailData.claim = 0
       }
       if (!this.detail.id) {
-        const res = await detail.save(this.detailData)
-        this.$store.commit('ADD_CHANGE_DETAIL', res)
-        this.$util.toastSuccess('保存成功')
-        Object.assign(this.detailData, {
-          money: 0,
-          remark: ''
+        detail.save(this.detailData).then(res => {
+          this.$store.commit('ADD_CHANGE_DETAIL', res)
+          this.$util.toastSuccess('保存成功')
+          Object.assign(this.detailData, {
+            money: 0,
+            remark: ''
+          })
+          this.keyboardShow = false
         })
-        this.keyboardShow = false
       } else {
-        const res = await detail.update(this.detail.id, this.detailData)
-        this.$store.commit('ADD_CHANGE_DETAIL', res)
-        uni.navigateBack()
+        // 更新时，先存入旧的数据到vuex，用于列表页的数据比对，进行merge
+        this.$store.commit('SET_EDIT_DETAIL', this.detail)
+        detail.update(this.detail.id, this.detailData).then(res => {
+          this.$store.commit('ADD_CHANGE_DETAIL', res)
+          uni.navigateBack()
+        }).catch(() => {
+          this.$store.commit('SET_EDIT_DETAIL', {})
+        })
       }
     },
     // 标记是否为报销

@@ -19,6 +19,9 @@ const mutations = {
   CLEAR_CHANGE_DETAIL (state) {
     state.changeDetails = []
   },
+  SET_EDIT_DETAIL (state, res) {
+    state.editDetailOld = res
+  },
   CLEAR_VUEX (state) {
     if (state.initState && typeof state.initState === 'function') {
       const initState = state.initState()

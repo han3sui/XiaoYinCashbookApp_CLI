@@ -14,7 +14,9 @@ const defaultState =
     // 账户信息
     account: [],
     // 更改的明细
-    changeDetails: []
+    changeDetails: [],
+    // 明细编辑的旧数据
+    editDetailOld: {}
   }
 const state = {
   ...defaultState,
