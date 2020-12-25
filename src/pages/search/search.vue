@@ -8,7 +8,7 @@
       </view>
     </view>
     <scroll-view scroll-y class="search-main" @scrolltolower="loadmore=true">
-      <list-details :loadmore.sync="loadmore" :params="params"/>
+      <list-details :loadmore.sync="loadmore" :params="params" path="search"/>
     </scroll-view>
   </view>
 </template>

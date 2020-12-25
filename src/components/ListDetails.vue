@@ -65,6 +65,11 @@ export default {
     loadmore: {
       type: Boolean,
       default: false
+    },
+    // 来源路径，index/search
+    path: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -119,13 +124,16 @@ export default {
       list.forEach(item => {
         if (!this.list[item.time]) {
           // 当前列表不存在该日期key
-          this.$set(this.list, item.time, {
-            time: item.time,
-            income: item.direction === 1 ? item.money : 0,
-            out: item.direction === 2 ? item.money : 0,
-            list: [item]
-          })
-          needSort = true
+          if (this.path === 'search' || item.time.substr(0, 7) === oldDetail.time.substr(0, 7)) {
+            // 查找页面下：可插入不同月份的数据，Index页下：如果不同月份的数据，忽略处理
+            this.$set(this.list, item.time, {
+              time: item.time,
+              income: item.direction === 1 ? item.money : 0,
+              out: item.direction === 2 ? item.money : 0,
+              list: [item]
+            })
+            needSort = true
+          }
         } else {
           // 如果存在该日期key
           if (this.list[item.time].list.findIndex(v => v.id === item.id) === -1) {
@@ -177,6 +185,7 @@ export default {
         }
       })
       if (needSort) {
+        // 明细需要重新排序
         needSort = false
         const newKeys = Object.keys(this.list).sort().reverse()
         const newObj = {}

@@ -22,7 +22,7 @@
       </view>
     </view>
     <scroll-view scroll-y class="content" @scrolltolower="loadmore=true">
-      <list-details :loadmore.sync="loadmore" :params="params"/>
+      <list-details :loadmore.sync="loadmore" :params="params" path="index"/>
     </scroll-view>
   </view>
 </template>
@@ -79,6 +79,9 @@ export default {
   onShow () {
     this.params.year = this.date.split('-')[0]
     this.params.month = this.date.split('-')[1]
+  },
+  onUnload () {
+    console.log('unload')
   },
   methods: {
     // 更改时间picker
