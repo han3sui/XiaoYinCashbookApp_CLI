@@ -377,7 +377,9 @@ export default {
       }
       if (!this.detail.id) {
         detail.save(this.detailData).then(res => {
-          this.$store.commit('ADD_CHANGE_DETAIL', res)
+          // 触发全局自定义事件，返回给明细列表页面数据
+          uni.$emit('indexChangeDetail', { newData: res, oldData: null })
+          uni.$emit('searchChangeDetail', { newData: res, oldData: null })
           this.$util.toastSuccess('保存成功')
           Object.assign(this.detailData, {
             money: 0,
@@ -386,13 +388,11 @@ export default {
           this.keyboardShow = false
         })
       } else {
-        // 更新时，先存入旧的数据到vuex，用于列表页的数据比对，进行merge
-        this.$store.commit('SET_EDIT_DETAIL', this.detail)
         detail.update(this.detail.id, this.detailData).then(res => {
-          this.$store.commit('ADD_CHANGE_DETAIL', res)
+          // 触发全局自定义事件，返回给明细列表页面数据
+          uni.$emit('indexChangeDetail', { newData: res, oldData: this.detail })
+          uni.$emit('searchChangeDetail', { newData: res, oldData: this.detail })
           uni.navigateBack()
-        }).catch(() => {
-          this.$store.commit('SET_EDIT_DETAIL', {})
         })
       }
     },

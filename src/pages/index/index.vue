@@ -81,7 +81,7 @@ export default {
     this.params.month = this.date.split('-')[1]
   },
   onUnload () {
-    console.log('unload')
+    uni.$off('indexChangeDetail')
   },
   methods: {
     // 更改时间picker
