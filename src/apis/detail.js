@@ -13,6 +13,17 @@ export function search (params = {}) {
 }
 
 /**
+ * 获取明细总额
+ * @param params
+ * @returns {Promise<unknown>}
+ */
+export function listMoney (params = {}) {
+  const link = `${url}/money`
+  params._loading = false
+  return request(link, 'GET', params)
+}
+
+/**
  * 保存明细
  * @param params
  * @returns {Promise | Promise<unknown>}

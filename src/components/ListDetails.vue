@@ -1,5 +1,5 @@
 <template>
-  <view class="body">
+  <scroll-view scroll-y class="body" :style="[customStyle]" @scrolltolower="listByParams(false)">
     <!--    空状态-->
     <base-empty v-if="JSON.stringify(list)==='{}' && loadStatus!=='loading' && loadStatus!=='error'"/>
     <!--    信息流主体-->
@@ -44,7 +44,7 @@
       <!--    加载状态-->
       <base-load-more :status="loadStatus" icon-type="flower" @retry="retry"/>
     </template>
-  </view>
+  </scroll-view>
 </template>
 
 <script>
@@ -62,15 +62,15 @@ export default {
       type: Object,
       detail: {}
     },
-    // 是否加载更多
-    loadmore: {
-      type: Boolean,
-      default: false
-    },
     // 来源路径，index/search
     path: {
       type: String,
       default: ''
+    },
+    // scroll-view高度，单位vh
+    height: {
+      type: [String, Number],
+      default: 90
     }
   },
   data () {
@@ -92,15 +92,23 @@ export default {
     // 最后核账时间
     checkTime () {
       return this.$store.state.userInfo.checkTime
+    },
+    // 自定义的内联样式
+    customStyle () {
+      return {
+        height: `${this.height}vh`
+      }
     }
   },
   watch: {
-    params () {
-      this.listByParams(true)
-    },
-    loadmore (e) {
-      if (e) {
-        this.listByParams()
+    params (newV, oldV) {
+      // 因为get请求的时候，params加上了_t的唯一ID，防止在其他地方触发请求，使用到相同的params并且主要内容不变，但是_t更改后（该场景会在列表页删除一条明细后，回传给index页面，重新根据params请求当月金额明细的时候，被重现，此时params主体内容是不变的，但是_t唯一ID更新了，因此会造成重新刷新列表），会触发该watch，重新刷新列表数据，因此需要深拷贝新旧数据，去除_t参数后，进行比较，如果不一致，则刷新列表页
+      const tmpNew = JSON.parse(JSON.stringify(newV))
+      const tmpOld = JSON.parse(JSON.stringify(oldV))
+      this.$delete(tmpNew, '_t')
+      this.$delete(tmpOld, '_t')
+      if (JSON.stringify(tmpNew) !== JSON.stringify(tmpOld)) {
+        this.listByParams(true)
       }
     }
   },
@@ -122,11 +130,11 @@ export default {
   methods: {
     // 从vuex更新明细
     handleChangeDetails (data) {
+      this.$emit('change')
       let needSort = false
       const item = data.newData
       const oldDetail = data.oldData
       if (!this.list[item.time]) {
-        console.log(this.params)
         // 当前列表不存在该日期key
         const oldDate = `${this.params.year}-${this.params.month}`
         if (this.path === 'search' || (this.path === 'index' && oldDate === item.time.substr(0, 7))) {
@@ -212,7 +220,7 @@ export default {
       this.loadStatus = 'loading'
       this.paging.page_no = this.paging.page_no + 1
       detailSearch({ ...this.params, ...this.paging }).then(res => {
-        this.$emit('update:loadmore', false)
+        // this.$emit('update:loadmore', false)
         this.loadStatus = ''
         if (res.length < this.paging.page_size) {
           this.loadStatus = 'finished'
@@ -273,6 +281,7 @@ export default {
                         this.$set(this.list[item.time], 'out', this.$util.floatSub(this.list[item.time].out, item.money))
                       }
                       this.$util.toastSuccess('删除成功')
+                      this.$emit('change')
                     })
                   }
                 }

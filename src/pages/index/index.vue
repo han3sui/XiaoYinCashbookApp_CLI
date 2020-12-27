@@ -21,15 +21,14 @@
         </view>
       </view>
     </view>
-    <scroll-view scroll-y class="content" @scrolltolower="loadmore=true">
-      <list-details :loadmore.sync="loadmore" :params="params" path="index"/>
-    </scroll-view>
+    <list-details :params="params" path="index" @change="listMoney"/>
   </view>
 </template>
 
 <script>
 import ListDetails from '../../components/ListDetails'
 import BaseIcon from '../../components/BaseIcon'
+import { listMoney } from '@/apis/detail'
 
 export default {
   components: { BaseIcon, ListDetails },
@@ -51,9 +50,7 @@ export default {
         category_id: 0,
         remark: '',
         check_time: 0
-      },
-      // 加载更多
-      loadmore: false
+      }
     }
   },
   computed: {
@@ -79,21 +76,40 @@ export default {
   onShow () {
     this.params.year = this.date.split('-')[0]
     this.params.month = this.date.split('-')[1]
+    this.listMoney()
   },
   onUnload () {
     uni.$off('indexChangeDetail')
   },
   methods: {
+    listMoney () {
+      listMoney(this.params).then(res => {
+        const incomeObj = res.filter(item => item.direction === 1)[0]
+        const outObj = res.filter(item => item.direction === 2)[0]
+        if (incomeObj) {
+          this.totalIncome = incomeObj.total
+        } else {
+          this.totalIncome = 0
+        }
+        if (outObj) {
+          this.totalOut = outObj.total
+        } else {
+          this.totalOut = 0
+        }
+      })
+    },
     // 更改时间picker
     handleChangeDate (e) {
       this.date = e.target.value
       this.params.year = this.date.split('-')[0]
       this.params.month = this.date.split('-')[1]
+      this.listMoney()
     },
     // 更改显示账户
     handleChangeAccount (e) {
       this.accountIndex = e.target.value
       this.params.account_id = this.accountList[this.accountIndex].id
+      this.listMoney()
     },
     // 前往搜索页
     handleToSearch () {
@@ -166,9 +182,6 @@ export default {
         }
       }
     }
-  }
-  .content{
-    height: 90vh;
   }
 }
 </style>

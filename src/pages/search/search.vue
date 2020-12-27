@@ -7,9 +7,7 @@
         <base-icon v-show="clearStatus" class="search-icon" name="close" color="#808080" @tap="clearSearch"/>
       </view>
     </view>
-    <scroll-view scroll-y class="search-main" @scrolltolower="loadmore=true">
-      <list-details :loadmore.sync="loadmore" :params="params" path="search"/>
-    </scroll-view>
+    <list-details :params="params" path="search"/>
   </view>
 </template>
 
@@ -30,8 +28,6 @@ export default {
         remark: '',
         check_time: 0
       },
-      // 加载更多
-      loadmore: false,
       // 备注
       remark: '',
       // input清空icon显示状态
@@ -111,9 +107,6 @@ export default {
         font-size: 28px;
       }
     }
-  }
-  &-main{
-    height: 90vh;
   }
 }
 </style>

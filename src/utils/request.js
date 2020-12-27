@@ -9,7 +9,6 @@ export function request (api, method = 'GET', params = {}, header = {}) {
   return new Promise(function (resolve, reject) {
     if (params._loading !== false) {
       loading(params._loading)
-      delete params._loading
     }
     method === 'GET' && (params._t = random())
     !header['content-type'] && (header['content-type'] = 'application/json')
