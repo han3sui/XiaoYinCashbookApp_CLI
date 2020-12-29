@@ -1,5 +1,6 @@
 import request from '../utils/request.js'
-const url = '/api/v2/category'
+import config from '@/utils/config'
+const url = `${config.API_VERSION}/category`
 
 /**
  * 分类列表

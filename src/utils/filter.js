@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import config from '@/utils/config'
 
 /**
  * 拼接Icon网络地址
@@ -6,7 +7,7 @@ import dayjs from 'dayjs'
  * @returns {string}
  */
 export function getIconUrl (name) {
-  return `https://cdn.han3sui.com/icon/${name}.png`
+  return `${config.CDN_URL}/icon/${name}.png`
 }
 
 /**

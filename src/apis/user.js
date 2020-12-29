@@ -1,6 +1,7 @@
 import request from '../utils/request.js'
 import store from '../store/index.js'
-const url = '/api/v2'
+import config from '@/utils/config'
+const url = `${config.API_VERSION}`
 
 /**
  * 用户登录

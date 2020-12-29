@@ -1,5 +1,6 @@
 import request from '../utils/request.js'
-const url = '/api/v2/icons'
+import config from '@/utils/config'
+const url = `${config.API_VERSION}/icons`
 
 /**
  * 图标列表

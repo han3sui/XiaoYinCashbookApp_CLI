@@ -1,5 +1,6 @@
 import request from '../utils/request.js'
-const url = '/api/v2/accounts'
+import config from '@/utils/config'
+const url = `${config.API_VERSION}/accounts`
 
 /**
  * 账户带余额的账户列表

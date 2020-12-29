@@ -1,6 +1,7 @@
 import store from '../store/index.js'
 import { loading, hideLoading, random, toastError } from './util'
 import { login } from '@/apis/user'
+import config from '@/utils/config'
 
 // 标记是否正在刷新token
 let isRefreshing = false
@@ -12,19 +13,12 @@ export function request (api, method = 'GET', params = {}, header = {}) {
     }
     method === 'GET' && (params._t = random())
     !header['content-type'] && (header['content-type'] = 'application/json')
-    let requestUrl
-    if (process.env.NODE_ENV === 'development') {
-      requestUrl = 'http://192.168.1.11:8199'
-      requestUrl = 'http://10.0.0.101:8199'
-    } else {
-      requestUrl = 'https://cashbook.han3sui.com'
-    }
     const token = store.state.token || uni.getStorageSync('token')
     token && (header.Authorization = `Bearer ${token}`)
     const loginCode = [9999]
     const successCode = [200, 201, 202, 203, 204, 205, 206]
     uni.request({
-      url: `${requestUrl}${api}`,
+      url: `${config.REQUEST_URL}${api}`,
       method: method,
       data: params,
       header: header,
