@@ -1,9 +1,11 @@
 <template>
   <movable-area :style="[customMovableAreaStyle]">
-    <movable-view :y="y" vertical="vertical" :style="[customMovableViewStyle]" @change="handleChange">
-      <scroll-view scroll-y :style="[customScrollStyle]" @scrolltolower="scrolltolower">
+    <movable-view :y="y" :out-of-bounds="true" :disabled="false" vertical="vertical" :style="[customMovableViewStyle]" @change="handleChange">
+      <scroll-view scroll-y class="scroll-view" @scrolltolower="scrolltolower">
         <view :style="[refreshStyle]">
-          <text>下拉刷新...</text>
+          <text v-if="status===1">下拉刷新</text>
+          <text v-if="status===2">松开更新</text>
+          <text v-if="status===3">加载中...</text>
         </view>
         <slot/>
       </scroll-view>
@@ -28,17 +30,13 @@ export default {
   },
   data () {
     return {
-      y: -this.topHeight
+      // 偏移量
+      y: 0,
+      // 刷新状态，1: 下拉刷新, 2: 松开更新, 3: 加载中, 4: 加载完成
+      status: 1
     }
   },
   computed: {
-    // Scroll内联样式
-    customScrollStyle () {
-      return {
-        height: '100%'
-        // height: `${this.scrollHeight}vh`
-      }
-    },
     customMovableAreaStyle () {
       return {
         height: `${this.scrollHeight}vh`,
@@ -47,13 +45,14 @@ export default {
     },
     customMovableViewStyle () {
       return {
-        height: `calc(${this.scrollHeight}vh + ${this.topHeight}rpx)`,
+        height: `calc(${this.scrollHeight}vh - ${this.topHeight}rpx)`,
         width: '100vw'
       }
     },
     refreshStyle () {
       return {
         height: `${this.topHeight}rpx`,
+        fontSize: '24rpx',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
@@ -61,7 +60,9 @@ export default {
     }
   },
   created () {
-    console.log(this.y)
+    this.$nextTick(() => {
+      this.y = -this.topHeight
+    })
   },
   methods: {
     scrolltolower () {
@@ -75,5 +76,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.scroll-view{
+  height: 100%;
+}
 </style>
