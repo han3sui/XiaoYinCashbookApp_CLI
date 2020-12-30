@@ -1,7 +1,9 @@
 <template>
-  <scroll-view scroll-y class="body" :style="[customStyle]" @scrolltolower="listByParams(false)">
+  <base-pull-scroll class="list-detail-body" :scroll-height="height" @loadmore="listByParams(false)">
     <!--    空状态-->
-    <base-empty v-if="JSON.stringify(list)==='{}' && loadStatus!=='loading' && loadStatus!=='error'"/>
+    <template v-if="JSON.stringify(list)==='{}' && loadStatus!=='loading' && loadStatus!=='error'">
+      <base-empty/>
+    </template>
     <!--    信息流主体-->
     <template v-else>
       <view class="detail-wrap" v-for="(item,key) in list" :key="key">
@@ -44,7 +46,7 @@
       <!--    加载状态-->
       <base-load-more :status="loadStatus" icon-type="flower" @retry="retry"/>
     </template>
-  </scroll-view>
+  </base-pull-scroll>
 </template>
 
 <script>
@@ -52,10 +54,11 @@ import BaseIcon from './BaseIcon'
 import { search as detailSearch, del as detailDel } from '../apis/detail'
 import BaseLoadMore from '@/components/BaseLoadMore'
 import BaseEmpty from '@/components/BaseEmpty'
+import BasePullScroll from '@/components/BasePullScroll'
 
 export default {
   name: 'ListDetails',
-  components: { BaseEmpty, BaseLoadMore, BaseIcon },
+  components: { BasePullScroll, BaseEmpty, BaseLoadMore, BaseIcon },
   props: {
     // 搜索条件
     params: {
@@ -298,7 +301,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.body {
+.list-detail-body {
   .detail-wrap {
     .detail-meta {
       display: flex;
