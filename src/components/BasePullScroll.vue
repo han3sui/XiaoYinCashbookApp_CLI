@@ -1,6 +1,6 @@
 <template>
   <movable-area :style="[customMovableAreaStyle]">
-    <movable-view :y="y" :out-of-bounds="true" :disabled="false" vertical="vertical" :style="[customMovableViewStyle]" @change="handleChange">
+    <movable-view :y="y" :out-of-bounds="true" :disabled="false" direction="vertical" :style="[customMovableViewStyle]" @change="handleChange">
       <scroll-view scroll-y class="scroll-view" @scrolltolower="scrolltolower">
         <view :style="[refreshStyle]">
           <text v-if="status===1">下拉刷新</text>
@@ -33,24 +33,28 @@ export default {
       // 偏移量
       y: 0,
       // 刷新状态，1: 下拉刷新, 2: 松开更新, 3: 加载中, 4: 加载完成
-      status: 1
+      status: 0
     }
   },
   computed: {
     customMovableAreaStyle () {
       return {
         height: `${this.scrollHeight}vh`,
-        width: '100vw'
+        width: '100vw',
+        overflow: 'hidden'
       }
     },
     customMovableViewStyle () {
       return {
-        height: `calc(${this.scrollHeight}vh - ${this.topHeight}rpx)`,
-        width: '100vw'
+        height: `calc(${this.scrollHeight}vh + ${this.topHeight}rpx)`,
+        zIndex: '3',
+        width: '100vw',
+        marginTop: Number(this.status) === 2 ? 0 : `-${this.topHeight}rpx`
       }
     },
     refreshStyle () {
       return {
+        position: 'relative',
         height: `${this.topHeight}rpx`,
         fontSize: '24rpx',
         display: 'flex',
@@ -61,7 +65,8 @@ export default {
   },
   created () {
     this.$nextTick(() => {
-      this.y = -this.topHeight
+      this.y = 500
+      // this.y = -this.topHeight
     })
   },
   methods: {
@@ -69,7 +74,19 @@ export default {
       this.$emit('loadmore')
     },
     handleChange (e) {
-      console.log(e)
+      const detail = e.detail
+      if (this.status === 3) return
+      if (detail.source === 'touch-out-of-bounds') {
+        if (e.detail.y >= 20) {
+          this.status = 2
+        } else {
+          this.status = 1
+        }
+      }
+      if (detail.source === 'out-of-bounds') {
+        this.status = 3
+      }
+      console.log(e.detail)
     }
   }
 }
