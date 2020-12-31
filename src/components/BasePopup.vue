@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { getZIndex } from '../utils/util'
+import { getZIndex } from '@/utils/util'
 
 export default {
   name: 'BasePopup',

@@ -21,7 +21,7 @@
         </view>
       </view>
     </view>
-    <list-details :params="params" path="index" @change="listMoney"/>
+    <list-details :params="params" path="index" @change="listMoney" @refresh="handleRefresh"/>
   </view>
 </template>
 
@@ -82,6 +82,11 @@ export default {
     uni.$off('indexChangeDetail')
   },
   methods: {
+    // 明细列表触发刷新，需要重新拉取当月支出、收入总和
+    handleRefresh () {
+      this.listMoney()
+    },
+    // 获取当月支出、收入总和
     listMoney () {
       listMoney(this.params).then(res => {
         const incomeObj = res.filter(item => item.direction === 1)[0]

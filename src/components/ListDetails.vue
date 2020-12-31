@@ -1,5 +1,5 @@
 <template>
-  <base-pull-scroll class="list-detail-body" :scroll-height="height" @loadmore="listByParams(false)">
+  <base-pull-scroll class="list-detail-body" :refreshed="refreshed" :scroll-height="height" @refresh="handleRefresh" @loadmore="listByParams(false)">
     <!--    空状态-->
     <template v-if="JSON.stringify(list)==='{}' && loadStatus!=='loading' && loadStatus!=='error'">
       <base-empty/>
@@ -78,6 +78,8 @@ export default {
   },
   data () {
     return {
+      // 是否刷新完毕
+      refreshed: false,
       // 加载状态，支持：loading/finished/error/loadmore
       loadStatus: '',
       // 数据明细
@@ -131,6 +133,13 @@ export default {
     uni.$off('searchChangeDetail')
   },
   methods: {
+    // 从scroll-pull触发刷新
+    handleRefresh () {
+      uni.vibrateShort()
+      this.refreshed = false
+      this.$emit('refresh')
+      this.listByParams(true)
+    },
     // 从vuex更新明细
     handleChangeDetails (data) {
       this.$emit('change')
@@ -223,7 +232,7 @@ export default {
       this.loadStatus = 'loading'
       this.paging.page_no = this.paging.page_no + 1
       detailSearch({ ...this.params, ...this.paging }).then(res => {
-        // this.$emit('update:loadmore', false)
+        refresh && (this.refreshed = true)
         this.loadStatus = ''
         if (res.length < this.paging.page_size) {
           this.loadStatus = 'finished'

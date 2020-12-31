@@ -4,23 +4,40 @@
     <scroll-view scroll-y class="content">
       <template v-if="claimList[subCurrent+1].length">
         <view class="claim-total-money">总计：{{ claimTotal[subCurrent + 1] }}</view>
-        <view class="claim-item" v-for="(item,index) in claimList[subCurrent+1]" :key="index">
-          <view class="claim-item-meta" v-if="(index===0) || (item.time!==claimList[subCurrent+1][index-1].time)">
-            <text class="claim-item-meta-date">{{ item.time }} {{ $util.getWeekDay(item.time) }}</text>
-          </view>
-          <view class="claim-item-content" hover-class="hover"
-                :class="[index<claimList[subCurrent+1].length && item.time!==claimList[subCurrent+1][index+1].time?'hide-after':'']"
-                @tap="handleEdit(index)">
-            <view class="left">
-              <base-icon class="left-icon" :name="item.category.icon|getIconUrl" :title="item.category.name"/>
-              <view class="left-info">
-                <text class="left-info-title">{{ item.category.name }}</text>
-                <text class="left-info-remark" v-if="item.remark">{{ item.remark }}</text>
-                <text class="left-info-account">{{ item.account.name }}</text>
+        <checkbox-group @change="checkboxChange" class="checkbox-group">
+          <view class="claim-item" v-for="(item,index) in claimList[subCurrent+1]" :key="index">
+            <view class="claim-item-meta" v-if="(index===0) || (item.time!==claimList[subCurrent+1][index-1].time)">
+              <text class="claim-item-meta-date">{{ item.time }} {{ $util.getWeekDay(item.time) }}</text>
+            </view>
+            <view class="claim-item-content" hover-class="hover"
+                  :class="[index<claimList[subCurrent+1].length && item.time!==claimList[subCurrent+1][index+1].time?'hide-after':'']"
+                  @tap="handleEdit(index)">
+              <view class="left">
+                <checkbox style="transform:scale(0.8)" color="#007aff" :value="item.id" :checked="checked.includes(item.id)" />
+                <base-icon class="left-icon" :name="item.category.icon|getIconUrl" :title="item.category.name"/>
+                <view class="left-info">
+                  <text class="left-info-title">{{ item.category.name }}</text>
+                  <text class="left-info-remark" v-if="item.remark">{{ item.remark }}</text>
+                  <text class="left-info-account">{{ item.account.name }}</text>
+                </view>
+              </view>
+              <view class="right">
+                <text class="right-money">{{ $util.formatMoney(item.money) }}</text>
               </view>
             </view>
-            <view class="right">
-              <text class="right-money">{{ $util.formatMoney(item.money) }}</text>
+          </view>
+        </checkbox-group>
+        <view class="claim-footer safe-area-inset-bottom">
+          <view class="left">
+              <checkbox-group @change="handleCheckAll">
+                <label class="left-text">
+                  <checkbox value="1" style="transform:scale(0.8)" color="#007aff" />全选
+                </label>
+              </checkbox-group>
+          </view>
+          <view class="right">
+            <view class="claim-button" @tap="handleClaim">
+              <text class="claim-button-text">去报销({{checked.length}})</text>
             </view>
           </view>
         </view>
@@ -29,9 +46,11 @@
     </scroll-view>
     <base-popup position="bottom" :safe-area-inset-bottom="true" v-model="pickerVisible">
       <scroll-view scroll-y class="account-scroll">
+        <view class="account-scroll-title">选择报销入账账户</view>
         <view class="account-scroll-content">
           <view class="account-list-item" v-for="(item,index) in accountList" :key="index" @tap="handleSelectAccount(item)">
-            <text>{{item.name}}</text>
+            <base-icon size="50" :name="item.icon" :label="item.name"/>
+<!--            <text>{{item.name}}</text>-->
           </view>
         </view>
       </scroll-view>
@@ -74,18 +93,59 @@ export default {
       // 账户列表显示
       pickerVisible: false,
       // 当前报销明细ID,
-      activeDetailId: 0
+      activeDetailId: 0,
+      // 批量选择数组
+      checked: []
     }
   },
   computed: {
     accountList () {
-      return this.$store.state.account
+      return [{ id: 0, name: '保持原账户', icon: 'icon-define' }, ...this.$store.state.account]
     }
   },
   onShow () {
     this.initClaim()
   },
   methods: {
+    handleClaim () {
+      if (!this.checked.length) {
+        this.$util.toastError('请选择报销明细')
+      } else {
+        this.pickerVisible = true
+        // uni.showModal({
+        //   title: '提示',
+        //   content: '如果保持原账户入账，请直接确认，否则请选择入账账户',
+        //   cancelText: '选择账户',
+        //   cancelColor: '#ff9900',
+        //   success: async (res) => {
+        //     if (res.confirm) {
+        //       await detail.update(item.id, {
+        //         claim: 2,
+        //         income_account_id: item.account.id
+        //       })
+        //       this.$util.toastSuccess('报销成功')
+        //       await this.initClaim()
+        //     } else {
+        //       this.activeDetailId = item.id
+        //       this.pickerVisible = true
+        //     }
+        //   }
+        // })
+      }
+    },
+    // checkbox变更
+    checkboxChange (e) {
+      this.checked = e.target.value
+    },
+    // 选择全部
+    handleCheckAll (e) {
+      console.log(e)
+      if (e.target.value.length) {
+        this.checked = this.claimList[1].map(item => item.id)
+      } else {
+        this.checked = []
+      }
+    },
     // 标记需要报销的明细
     handleCheckbox (e) {
       if (e.target.value.length) {
@@ -123,7 +183,7 @@ export default {
       const item = this.claimList[this.subCurrent + 1][index]
       if (item.claim !== 2) {
         uni.showActionSheet({
-          itemList: ['编辑明细', '删除明细', '已报销'],
+          itemList: ['编辑明细', '删除明细'],
           success: (e) => {
             switch (e.tapIndex) {
               case 0:
@@ -140,27 +200,6 @@ export default {
                       await detail.del(item.id)
                       this.$util.toastSuccess('删除成功')
                       await this.initClaim()
-                    }
-                  }
-                })
-                break
-              case 2:
-                uni.showModal({
-                  title: '提示',
-                  content: '如果保持原账户入账，请直接确认，否则请选择入账账户',
-                  cancelText: '选择账户',
-                  cancelColor: '#ff9900',
-                  success: async (res) => {
-                    if (res.confirm) {
-                      await detail.update(item.id, {
-                        claim: 2,
-                        income_account_id: item.account.id
-                      })
-                      this.$util.toastSuccess('报销成功')
-                      await this.initClaim()
-                    } else {
-                      this.activeDetailId = item.id
-                      this.pickerVisible = true
                     }
                   }
                 })
@@ -218,28 +257,56 @@ export default {
 }
 
 .account-scroll{
-  height: 35vh;
+  //height: 35vh;
   background-color: #f8f8f8;
+  &-title{
+    font-size: 26px;
+    font-weight: bold;
+    margin: 30px 0 30px 20px;
+  }
   &-content{
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: column;
     padding: 20px;
+    background: #FFF;
     .account-list-item{
+      padding: 10px;
       display: flex;
-      align-items: center;
-      justify-content: space-around;
-      width: calc(calc(100% / 4) - 20px);
-      margin: 10px;
-      height: 80px;
-      border-radius: 10px;
-      background: #FFF;
-      font-size: 28px;
+      font-size: 24px;
+      //display: flex;
+      //align-items: center;
+      //justify-content: space-around;
+      //width: calc(calc(100% / 4) - 20px);
+      //margin: 10px;
+      //height: 80px;
+      //border-radius: 10px;
+      //background: #FFF;
+      //font-size: 28px;
       &:active{
         background-color: #EEEEEE;
       }
     }
   }
+  //&-content{
+  //  display: flex;
+  //  flex-direction: row;
+  //  flex-wrap: wrap;
+  //  padding: 20px;
+  //  .account-list-item{
+  //    display: flex;
+  //    align-items: center;
+  //    justify-content: space-around;
+  //    width: calc(calc(100% / 4) - 20px);
+  //    margin: 10px;
+  //    height: 80px;
+  //    border-radius: 10px;
+  //    background: #FFF;
+  //    font-size: 28px;
+  //    &:active{
+  //      background-color: #EEEEEE;
+  //    }
+  //  }
+  //}
 }
 
 .claim {
@@ -275,6 +342,9 @@ export default {
         top: 0;
         left: 0;
       }
+    }
+    .checkbox-group{
+      margin-bottom: 100px;
     }
 
     .claim-item {
@@ -367,6 +437,40 @@ export default {
             color: #3b4144;
           }
         }
+      }
+    }
+    .claim-footer{
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      background-color: #f6f6f6;
+      height: 100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .left{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-left: 20px;
+        &-text{
+          display: flex;
+          align-items: center;
+          font-size: 24px;
+        }
+      }
+      .claim-button{
+        height: 70px;
+        margin-right: 20px;
+        border-radius: 40px;
+        width: 200px;
+        background: linear-gradient(-90deg, rgba(38, 196, 65, 1), rgba(1, 174, 50, 1));
+        font-size: 24px;
+        font-weight: bold;
+        color: #FFFFFF;
+        line-height: 70px;
+        text-align: center;
       }
     }
   }
