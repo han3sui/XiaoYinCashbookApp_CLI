@@ -43,29 +43,29 @@
     <view class="body">
       <view class="cell-wrap">
         <base-cell>
-          <base-cell-item title='账户管理' :arrow="true" @tap="toAccount"/>
-          <base-cell-item title='报销管理' :arrow="true" @tap="toClaim"/>
-          <base-cell-item title='核账记录' :arrow="true" @tap="toCheckList"/>
-          <base-cell-item title='支出类别管理' :arrow="true" @tap="toCategory('out')"/>
-          <base-cell-item title='收入类别管理' :arrow="true" @tap="toCategory('income')"/>
+          <base-cell-item title='账户管理' :arrow="true" icon="account" @tap="toAccount"/>
+          <base-cell-item title='报销管理' :arrow="true" icon="baoxiao" @tap="toClaim"/>
+          <base-cell-item title='核账记录' :arrow="true" icon="hezhang" @tap="toCheckList"/>
+          <base-cell-item title='支出类别管理' :arrow="true" icon="zhichu" @tap="toCategory('out')"/>
+          <base-cell-item title='收入类别管理' :arrow="true" icon="shouru" @tap="toCategory('income')"/>
         </base-cell>
       </view>
       <view class="cell-wrap">
         <base-cell>
           <view class="feed-back-wrap">
-            <base-cell-item title='反馈与建议' :arrow="true"/>
+            <base-cell-item title='反馈与建议' icon="fankui" :arrow="true"/>
             <button class="feed-back" open-type="feedback"/>
           </view>
-          <base-cell-item title='清理缓存' note="程序异常时使用" @tap="clearStorage" :arrow="true"/>
+          <base-cell-item title='清理缓存' icon="qingchuhuancun" note="程序异常时使用" @tap="clearStorage" :arrow="true"/>
           <view class="feed-back-wrap">
-            <base-cell-item title='推荐给好友' :arrow="true"/>
+            <base-cell-item title='推荐给好友' icon="tuijian" :arrow="true"/>
             <button class="feed-back" open-type="share"/>
           </view>
         </base-cell>
       </view>
       <view class="cell-wrap">
         <base-cell>
-          <base-cell-item title='当前版本' note="v1.1.1"/>
+          <base-cell-item title='当前版本' icon="banben" note="v1.1.2"/>
         </base-cell>
       </view>
     </view>

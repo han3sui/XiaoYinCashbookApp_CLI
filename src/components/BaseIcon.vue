@@ -1,19 +1,22 @@
 <template>
-  <view class="body">
-    <template v-if="isImg">
-      <view class="icon-wrap">
-        <text class="icon-wrap-text" v-if="name.indexOf('icon-define.png')!==-1">{{title.substr(0,1)}}</text>
-        <img class="icon-wrap-img" :style="[imgStyle]" alt="" :src="name"/>
-      </view>
-    </template>
-    <template v-else>
-      <text class="base-icon" :class="[`base-icon-${name}`,loading?'loading-animation':'']" :style="[iconStyle]"/>
-      <text :style="[labelStyle]" v-if="label">{{label}}</text>
-    </template>
+  <view class="icon-body" :style="[iconBodyStyle]">
+    <view class="icon-wrap">
+      <template v-if="isImg">
+        <!--      网络图片-->
+        <text v-if="name.indexOf('icon-define')!==-1" class="icon-wrap-text">{{ title.substr(0, 1) }}</text>
+        <img :style="[imgStyle]" alt="" :src="setImageUrl(name)"/>
+      </template>
+      <template v-else>
+        <!--      字体图标-->
+        <text :class="['base-icon',`base-icon-${name}`]" :style="[iconStyle]"/>
+      </template>
+    </view>
+    <text :style="[labelStyle]" v-if="label">{{ label }}</text>
   </view>
 </template>
 
 <script>
+import config from '@/utils/config'
 export default {
   name: 'BaseIcon',
   props: {
@@ -41,11 +44,26 @@ export default {
     label: {
       type: String,
       default: ''
+    },
+    // 右边距，单位rpx
+    marginRight: {
+      type: [String, Number],
+      default: 0
+    },
+    // label左边距，单位rpx
+    labelMarginLeft: {
+      type: [String, Number],
+      default: 0
     }
   },
   computed: {
     isImg () {
-      return this.name.indexOf('/') !== -1
+      return this.name.indexOf('icon-') !== -1 || this.name.indexOf('/') !== -1
+    },
+    iconBodyStyle () {
+      return {
+        marginRight: `${this.marginRight}rpx`
+      }
     },
     iconStyle () {
       let style = {}
@@ -59,45 +77,50 @@ export default {
     imgStyle () {
       let style = {}
       style = {
-        width: `${this.size}rpx`,
-        height: `${this.size}rpx`
+        width: this.size === 'inherit' ? '50rpx' : `${this.size}rpx`,
+        height: this.size === 'inherit' ? '50rpx' : `${this.size}rpx`
       }
       return style
     },
     labelStyle () {
       let style = {}
       style = {
-        fontSize: this.size === 'inherit' ? this.size : `${this.size / 1.5}rpx`
+        fontSize: this.size === 'inherit' ? this.size : `${this.size / 1.5}rpx`,
+        marginLeft: `${this.labelMarginLeft}rpx`
       }
       this.color && (style.color = this.color)
       return style
+    }
+  },
+  methods: {
+    setImageUrl (name) {
+      if (name.indexOf('icon-') !== -1) {
+        return `${config.CDN_URL}/icon/${name}.png`
+      } else {
+        return name
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.body{
+.icon-body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
-  .icon-wrap{
+
+  .icon-wrap {
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    width: 100%;
-    height: 100%;
-    &-img{
-      width: 100%;
-      height: 100%;
-    }
-    &-text{
+
+    &-text {
       position: absolute;
       color: #FFFFFF;
       font-size: 24px;
+      line-height: 24px;
     }
   }
 }

@@ -18,7 +18,7 @@
             <view :id="`node-id-${item.id}`">
               <view class="check-item-content" v-for="(v1,k1) in item.list" :key="k1">
                 <view class="left">
-                  <base-icon class="left-icon" :name="v1.icon|getIconUrl" :title="v1.name" />
+                  <base-icon :name="v1.icon" :title="v1.name" />
                   <view class="left-info">
                     <text class="left-info-title">{{v1.name}}</text>
                   </view>
@@ -173,11 +173,6 @@ export default {
           display: flex;
           flex-direction: row;
           align-items: center;
-          .left-icon{
-            width: 50px;
-            height: 50px;
-            margin-right: 18px;
-          }
           .left-info{
             display: flex;
             flex-direction: column;

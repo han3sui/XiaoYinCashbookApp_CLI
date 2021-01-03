@@ -166,6 +166,7 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
+    align-items: center;
     & image {
       width: 50px;
       height: 50px;

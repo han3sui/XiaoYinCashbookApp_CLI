@@ -14,7 +14,7 @@
             <view class="category-wrap">
               <template v-for="(v2,v2index) in v1.nodes">
                 <view :key="v2index" class="category-item" :class="[(v2.id===detailData.category_id||v2.income_account_id===detailData.income_account_id||v2.account_id===detailData.account_id)?'category-item-active':'']" @tap="handleSelect(v2)">
-                  <base-icon size="50" :name="v2.icon|getIconUrl" :title="v2.name"/>
+                  <base-icon size="50" margin-right="0" :name="v2.icon" :title="v2.name"/>
                   <view class="category-item-title">{{v2.name}}</view>
                 </view>
               </template>
@@ -349,6 +349,7 @@ export default {
     },
     // 记录账单
     handleEdit (e) {
+      uni.vibrateShort()
       let money = this.detailData.money
       if (e === 'd') {
         if (money.toString().length > 1) {
@@ -429,6 +430,7 @@ export default {
       .keyboard-meta-remark{
         display: flex;
         flex-direction: row;
+        align-items: center;
         font-size: 28px;
         line-height: 28px;
         text-align: left;

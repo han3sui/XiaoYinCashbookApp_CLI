@@ -15,7 +15,7 @@
     <scroll-view scroll-y class="cell-wrap">
       <base-cell>
         <template v-for="(item,index) in list">
-          <base-cell-item :title="item.name" :key="index" :remark="!item.add_total?'不计入总资产':''" :balance="item.balance" :icon="item.icon|getIconUrl" @tap="handleEdit(item)"/>
+          <base-cell-item :title="item.name" :key="index" :remark="!item.add_total?'不计入总资产':''" :balance="item.balance" :icon="item.icon" icon-size="50" @tap="handleEdit(item)"/>
         </template>
       </base-cell>
     </scroll-view>

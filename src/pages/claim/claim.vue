@@ -10,18 +10,17 @@
               <text class="claim-item-meta-date">{{ item.time }} {{ $util.getWeekDay(item.time) }}</text>
             </view>
             <view class="claim-item-content" hover-class="hover"
-                  :class="[index<claimList[subCurrent+1].length && item.time!==claimList[subCurrent+1][index+1].time?'hide-after':'']"
-                  @tap="handleEdit(index)">
+                  :class="[index<claimList[subCurrent+1].length && item.time!==claimList[subCurrent+1][index+1].time?'hide-after':'']">
               <view class="left">
                 <checkbox style="transform:scale(0.8)" color="#007aff" :value="item.id" :checked="checked.includes(item.id)" />
-                <base-icon class="left-icon" :name="item.category.icon|getIconUrl" :title="item.category.name"/>
-                <view class="left-info">
-                  <text class="left-info-title">{{ item.category.name }}</text>
-                  <text class="left-info-remark" v-if="item.remark">{{ item.remark }}</text>
-                  <text class="left-info-account">{{ item.account.name }}</text>
-                </view>
               </view>
-              <view class="right">
+              <view class="right" @tap="handleEdit(index)">
+                <base-icon :name="item.category.icon" :title="item.category.name" margin-right="15"/>
+                <view class="right-info">
+                  <text class="right-info-title">{{ item.category.name }}</text>
+                  <text class="right-info-remark" v-if="item.remark">{{ item.remark }}</text>
+                  <text class="right-info-account">{{ item.account.name }}</text>
+                </view>
                 <text class="right-money">{{ $util.formatMoney(item.money) }}</text>
               </view>
             </view>
@@ -31,7 +30,7 @@
           <view class="left">
               <checkbox-group @change="handleCheckAll">
                 <label class="left-text">
-                  <checkbox value="1" style="transform:scale(0.8)" color="#007aff" />全选
+                  <checkbox style="transform:scale(0.8)" color="#007aff" :checked="checked.length===claimList[1].length" />全选
                 </label>
               </checkbox-group>
           </view>
@@ -49,8 +48,7 @@
         <view class="account-scroll-title">选择报销入账账户</view>
         <view class="account-scroll-content">
           <view class="account-list-item" v-for="(item,index) in accountList" :key="index" @tap="handleSelectAccount(item)">
-            <base-icon size="50" :name="item.icon" :label="item.name"/>
-<!--            <text>{{item.name}}</text>-->
+            <base-icon size="50" :name="item.icon" :title="item.name" :label="item.name" label-margin-left="18"/>
           </view>
         </view>
       </scroll-view>
@@ -100,7 +98,7 @@ export default {
   },
   computed: {
     accountList () {
-      return [{ id: 0, name: '保持原账户', icon: 'icon-define' }, ...this.$store.state.account]
+      return [{ id: 0, name: '保持原账户', icon: 'jinzhi' }, ...this.$store.state.account]
     }
   },
   onShow () {
@@ -135,11 +133,10 @@ export default {
     },
     // checkbox变更
     checkboxChange (e) {
-      this.checked = e.target.value
+      this.checked = e.target.value.map(item => Number(item))
     },
     // 选择全部
     handleCheckAll (e) {
-      console.log(e)
       if (e.target.value.length) {
         this.checked = this.claimList[1].map(item => item.id)
       } else {
@@ -269,10 +266,13 @@ export default {
     flex-direction: column;
     padding: 20px;
     background: #FFF;
+    max-height: 60vh;
+    overflow-y: scroll;
     .account-list-item{
-      padding: 10px;
+      padding: 15px 10px;
       display: flex;
       font-size: 24px;
+      position: relative;
       //display: flex;
       //align-items: center;
       //justify-content: space-around;
@@ -282,6 +282,17 @@ export default {
       //border-radius: 10px;
       //background: #FFF;
       //font-size: 28px;
+      &:not(:last-child):after{
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        height: 1px;
+        content: "";
+        -webkit-transform: scaleY(.5);
+        transform: scaleY(.5);
+        background-color: #e5e5e5
+      }
       &:active{
         background-color: #EEEEEE;
       }
@@ -398,17 +409,18 @@ export default {
           display: flex;
           flex-direction: row;
           align-items: center;
+        }
 
-          .left-icon {
-            width: 50px;
-            height: 50px;
-            margin-right: 18px;
-          }
-
-          .left-info {
+        .right {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          flex: 1;
+          .right-info {
             display: flex;
             flex-direction: column;
             align-content: flex-start;
+            flex: 1;
 
             &-title {
               font-size: 28px;
@@ -427,9 +439,6 @@ export default {
               padding-top: 10px;
             }
           }
-        }
-
-        .right {
           &-money {
             font-family: Avenir, Helvetica, Arial, sans-serif;
             font-weight: 600;

@@ -6,7 +6,9 @@
           <view :key="index" class="left-item" :class="[index===active?'left-item-active':'']" @tap="selectCategory(index)">{{item.name}}</view>
         </template>
       </scroll-view>
-      <view class="left-item" hover-class="hover" @tap="handleAdd"><i class="iconfont icon-arrow-right"/>新增</view>
+      <view class="left-item" hover-class="hover" @tap="handleAdd">
+        <base-icon name="add" size="40" label="新增" color="#82848a" label-margin-left="5"/>
+      </view>
     </view>
     <view class="right">
       <scroll-view scroll-y :scroll-top="rightScrollTop" scroll-with-animation class="scroll-right" @scroll="rightScroll">
@@ -16,7 +18,7 @@
             <view class="category-wrap">
               <template v-for="(v2,v2index) in v1.nodes">
                 <view :key="v2index" class="category-item" hover-class="hover" @tap="handleEdit(v2)">
-                  <base-icon size="50" :name="v2.icon|getIconUrl" :title="v2.name"/>
+                  <base-icon size="50" :name="v2.icon" :title="v2.name"/>
                   <view class="category-item-title">{{v2.name}}</view>
                 </view>
               </template>

@@ -173,14 +173,6 @@ export default {
       .picker-title{
         font-size: 28px;
       }
-      & i {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 50px;
-        height: 50px;
-        font-size: 28px;
-      }
     }
   }
 
@@ -189,19 +181,11 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
+    align-items: center;
 
     & image {
       width: 50px;
       height: 50px;
-    }
-
-    & i {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 50px;
-      height: 50px;
-      font-size: 28px;
     }
   }
 }

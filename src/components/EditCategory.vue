@@ -12,7 +12,7 @@
           <view class="category-wrap">
             <template v-for="(v2,v2index) in v1.nodes">
               <view :key="v2index" class="category-item" :class="[(v2.id===currentId||v2.income_account_id===incomeId)?'category-item-active':'']" @tap="handleSelect(v2)">
-                <base-icon size="50" :name="v2.icon|getIconUrl" :title="v2.name"/>
+                <base-icon size="50" :name="v2.icon" :title="v2.name"/>
                 <view class="category-item-title">{{v2.name}}</view>
               </view>
             </template>

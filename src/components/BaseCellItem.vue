@@ -2,9 +2,7 @@
   <view class="cell-item" hover-class="hover">
     <view class="cell-item__container">
       <view class="cell-item__left">
-        <view v-if="icon" class="cell-item__left-icon">
-          <base-icon :name="icon" :title="title"/>
-        </view>
+        <base-icon v-if="icon" margin-right="18" :name="icon" :size="iconSize" :title="title"/>
         <view class="cell-item__left-title">
           <text class="title">{{ title }}</text>
           <text class="remark" v-if="remark">{{remark}}</text>
@@ -17,9 +15,7 @@
         <view v-if="balance!==null" class="cell-item__right-balance">
           <text :class="[(balance>=0)?'cell-item__right-balance-income':'cell-item__right-balance-out']">{{ $util.formatMoney(balance) }}</text>
         </view>
-        <view v-if="arrow" class="cell-item__right-arrow">
-          <base-icon name="arrow-right"/>
-        </view>
+        <base-icon v-if="arrow" name="arrow-right" size="30"/>
       </view>
     </view>
   </view>
@@ -55,6 +51,11 @@ export default {
     icon: {
       type: String,
       default: ''
+    },
+    // 图标大小
+    iconSize: {
+      type: [String, Number],
+      default: 40
     },
     // 标题下方提示
     remark: {
@@ -98,12 +99,6 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    &-icon{
-      width: 50px;
-      height: 50px;
-      margin-right: 18px;
-      overflow: hidden;
-    }
     &-title{
       display: flex;
       flex-direction: column;
@@ -135,14 +130,6 @@ export default {
       }
       &-out{
         color: #dd524d !important;
-      }
-    }
-    &-arrow{
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      .iconfont {
-        font-size: 30px;
       }
     }
   }

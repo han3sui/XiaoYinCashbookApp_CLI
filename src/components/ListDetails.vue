@@ -19,8 +19,8 @@
           <view :style="{'textDecoration':v.claim===2?'line-through':''}" class="detail-item" hover-class="hover"
                 v-for="(v,i) in item.list" :key="i" @tap="handleEdit(v,i)">
             <view class="detail-item-info">
-              <base-icon class="detail-item-info-thumb"
-                         :name="(v.direction===3?v.account.icon:v.category.icon)|getIconUrl"
+              <base-icon margin-right="18"
+                         :name="v.direction===3?v.account.icon:v.category.icon"
                          :title="v.direction===3?v.account.name:v.category.name"/>
               <view class="detail-item-info-wrap">
                 <text v-if="v.claim===0" class="detail-item-info-wrap-name">
@@ -140,7 +140,7 @@ export default {
       this.$emit('refresh')
       this.listByParams(true)
     },
-    // 从vuex更新明细
+    // eventbus全局监听触发明细变动
     handleChangeDetails (data) {
       this.$emit('change')
       let needSort = false
@@ -362,12 +362,6 @@ export default {
           display: flex;
           flex-direction: row;
           align-items: center;
-
-          &-thumb {
-            width: 50px;
-            height: 50px;
-            margin-right: 18px;
-          }
 
           &-wrap {
             display: flex;
