@@ -3,7 +3,7 @@
     <view class="icon-wrap">
       <template v-if="isImg">
         <!--      网络图片-->
-        <text v-if="name.indexOf('icon-define')!==-1" class="icon-wrap-text">{{ title.substr(0, 1) }}</text>
+        <text v-if="name.indexOf('icon-define')!==-1" :style="[textStyle]">{{ title.substr(0, 1) }}</text>
         <img :style="[imgStyle]" alt="" :src="setImageUrl(name)"/>
       </template>
       <template v-else>
@@ -90,6 +90,14 @@ export default {
       }
       this.color && (style.color = this.color)
       return style
+    },
+    textStyle () {
+      return {
+        position: 'absolute;',
+        color: '#FFFFFF',
+        fontSize: this.size === 'inherit' ? '24rpx' : `${this.size / 2}rpx`,
+        lineHeight: this.size === 'inherit' ? '24rpx' : `${this.size / 2}rpx`
+      }
     }
   },
   methods: {
@@ -115,13 +123,6 @@ export default {
     align-items: center;
     justify-content: center;
     position: relative;
-
-    &-text {
-      position: absolute;
-      color: #FFFFFF;
-      font-size: 24px;
-      line-height: 24px;
-    }
   }
 }
 </style>

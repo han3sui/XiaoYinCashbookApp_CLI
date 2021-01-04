@@ -105,3 +105,13 @@ export function getClaim (claim = 1) {
   const link = `${url}/claim/${claim}`
   return request(link)
 }
+
+/**
+ * 批量报销
+ * @param data
+ * @returns {Promise | Promise<unknown>}
+ */
+export function batchUpdateClaim (data) {
+  const link = `${url}/claim`
+  return request(link, 'POST', data)
+}
