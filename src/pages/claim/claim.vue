@@ -247,6 +247,7 @@ export default {
         })
       })
       await batchUpdateClaim(data)
+      this.checked = []
       this.activeDetailId = 0
       this.pickerVisible = false
       this.$util.toastSuccess('报销成功')
