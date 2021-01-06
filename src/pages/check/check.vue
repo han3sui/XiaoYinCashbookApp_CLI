@@ -18,7 +18,7 @@
             <view :id="`node-id-${item.id}`">
               <view class="check-item-content" v-for="(v1,k1) in item.list" :key="k1">
                 <view class="left">
-                  <base-icon :name="v1.icon" :title="v1.name" />
+                  <base-icon :name="v1.icon" margin-right="18" :title="v1.name" />
                   <view class="left-info">
                     <text class="left-info-title">{{v1.name}}</text>
                   </view>

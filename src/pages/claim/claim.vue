@@ -1,54 +1,20 @@
 <template>
   <view class="claim">
     <base-subsection class="subsection" :list="subList" :current="subCurrent" @change="handleSubChange"/>
-    <scroll-view scroll-y class="content">
+    <scroll-view scroll-y class="content" :style="[contentStyle]">
       <template v-if="claimList[subCurrent+1].length">
         <view class="claim-total-money">总计：{{ claimTotal[subCurrent + 1] }}</view>
-        <template v-if="subCurrent===0">
-          <checkbox-group @change="checkboxChange" class="checkbox-group">
-            <view class="claim-item" v-for="(item,index) in claimList[subCurrent+1]" :key="index">
-              <view class="claim-item-meta" v-if="(index===0) || (item.time!==claimList[subCurrent+1][index-1].time)">
-                <text class="claim-item-meta-date">{{ item.time }} {{ $util.getWeekDay(item.time) }}</text>
-              </view>
-              <view class="claim-item-content" hover-class="hover"
-                    :class="[index<claimList[subCurrent+1].length && item.time!==claimList[subCurrent+1][index+1].time?'hide-after':'']">
-                <view class="left">
-                  <checkbox style="transform:scale(0.8)" color="#007aff" :value="item.id" :checked="checked.includes(item.id)" />
-                </view>
-                <view class="right" @tap="handleEdit(index)">
-                  <base-icon :name="item.category.icon" :title="item.category.name" margin-right="15"/>
-                  <view class="right-info">
-                    <text class="right-info-title">{{ item.category.name }}</text>
-                    <text class="right-info-remark" v-if="item.remark">{{ item.remark }}</text>
-                    <text class="right-info-account">{{ item.account.name }}</text>
-                  </view>
-                  <text class="right-money">{{ $util.formatMoney(item.money) }}</text>
-                </view>
-              </view>
-            </view>
-          </checkbox-group>
-          <view class="claim-footer safe-area-inset-bottom">
-            <view class="left">
-              <checkbox-group @change="handleCheckAll">
-                <label class="left-text">
-                  <checkbox style="transform:scale(0.8)" color="#007aff" :checked="checked.length===claimList[1].length" />全选
-                </label>
-              </checkbox-group>
-            </view>
-            <view class="right">
-              <view class="claim-button" @tap="handleClaim">
-                <text class="claim-button-text">去报销({{checked.length}})</text>
-              </view>
-            </view>
-          </view>
-        </template>
-        <template v-else>
+        <checkbox-group @change="checkboxChange" class="checkbox-group">
           <view class="claim-item" v-for="(item,index) in claimList[subCurrent+1]" :key="index">
             <view class="claim-item-meta" v-if="(index===0) || (item.time!==claimList[subCurrent+1][index-1].time)">
               <text class="claim-item-meta-date">{{ item.time }} {{ $util.getWeekDay(item.time) }}</text>
             </view>
             <view class="claim-item-content" hover-class="hover"
                   :class="[index<claimList[subCurrent+1].length && item.time!==claimList[subCurrent+1][index+1].time?'hide-after':'']">
+              <view class="left" v-if="subCurrent===0">
+                <checkbox style="transform:scale(0.8)" color="#007aff" :value="item.id"
+                          :checked="checked.includes(item.id)"/>
+              </view>
               <view class="right" @tap="handleEdit(index)">
                 <base-icon :name="item.category.icon" :title="item.category.name" margin-right="15"/>
                 <view class="right-info">
@@ -60,15 +26,32 @@
               </view>
             </view>
           </view>
-        </template>
+        </checkbox-group>
       </template>
       <base-empty v-else/>
     </scroll-view>
+    <view class="claim-footer safe-area-inset-bottom" v-if="subCurrent===0">
+      <view class="left">
+        <checkbox-group @change="handleCheckAll">
+          <label class="left-text">
+            <checkbox style="transform:scale(0.8)" color="#007aff"
+                      :checked="checkAllStatus"/>
+            全选
+          </label>
+        </checkbox-group>
+      </view>
+      <view class="right">
+        <view class="claim-button" @tap="handleClaim">
+          <text class="claim-button-text">去报销({{ checked.length }})</text>
+        </view>
+      </view>
+    </view>
     <base-popup position="bottom" :safe-area-inset-bottom="true" v-model="pickerVisible">
       <scroll-view scroll-y class="account-scroll">
         <view class="account-scroll-title">选择报销入账账户</view>
         <view class="account-scroll-content">
-          <view class="account-list-item" v-for="(item,index) in accountList" :key="index" @tap="handleSelectAccount(item)">
+          <view class="account-list-item" v-for="(item,index) in accountList" :key="index"
+                @tap="handleSelectAccount(item)">
             <base-icon size="40" :name="item.icon" :title="item.name" :label="item.name" label-margin-left="18"/>
           </view>
         </view>
@@ -118,7 +101,19 @@ export default {
   },
   computed: {
     accountList () {
-      return [{ id: 0, name: '保持原账户', icon: 'jinzhi' }, ...this.$store.state.account]
+      return [{
+        id: 0,
+        name: '保持原账户',
+        icon: 'jinzhi'
+      }, ...this.$store.state.account]
+    },
+    contentStyle () {
+      return {
+        height: this.subCurrent === 0 ? 'calc(90vh- 100rpx)' : '90vh'
+      }
+    },
+    checkAllStatus () {
+      return this.checked.length === this.claimList[1].length
     }
   },
   onShow () {
@@ -233,25 +228,33 @@ export default {
       }
     },
     // 选择入账账户
-    async handleSelectAccount (item) {
-      const data = []
-      this.checked.forEach(v => {
-        let incomeAccountId = item.id
-        if (item.id === 0) {
-          incomeAccountId = this.claimList[1].filter(v1 => v1.id === v)[0].account.id
+    handleSelectAccount (item) {
+      uni.showModal({
+        title: '提示',
+        content: `选中明细将报销到 ${item.name}`,
+        success: async (res) => {
+          if (res.confirm) {
+            const data = []
+            this.checked.forEach(v => {
+              let incomeAccountId = item.id
+              if (item.id === 0) {
+                incomeAccountId = this.claimList[1].filter(v1 => v1.id === v)[0].account.id
+              }
+              data.push({
+                id: v,
+                claim: 2,
+                income_account_id: incomeAccountId
+              })
+            })
+            await batchUpdateClaim(data)
+            this.checked = []
+            this.activeDetailId = 0
+            this.pickerVisible = false
+            this.$util.toastSuccess('报销成功')
+            await this.initClaim()
+          }
         }
-        data.push({
-          id: v,
-          claim: 2,
-          income_account_id: incomeAccountId
-        })
       })
-      await batchUpdateClaim(data)
-      this.checked = []
-      this.activeDetailId = 0
-      this.pickerVisible = false
-      this.$util.toastSuccess('报销成功')
-      await this.initClaim()
     }
   }
 }
@@ -264,26 +267,30 @@ export default {
   }
 }
 
-.account-scroll{
+.account-scroll {
   background-color: #f8f8f8;
-  &-title{
+
+  &-title {
     font-size: 26px;
     font-weight: bold;
     margin: 30px 0 30px 20px;
   }
-  &-content{
+
+  &-content {
     display: flex;
     flex-direction: column;
     padding: 0 20px;
     background: #FFF;
     max-height: 60vh;
     overflow-y: scroll;
-    .account-list-item{
+
+    .account-list-item {
       padding: 25px 10px;
       display: flex;
       font-size: 24px;
       position: relative;
-      &:not(:last-child):after{
+
+      &:not(:last-child):after {
         position: absolute;
         bottom: 0;
         right: 0;
@@ -294,7 +301,8 @@ export default {
         transform: scaleY(.5);
         background-color: #e5e5e5
       }
-      &:active{
+
+      &:active {
         background-color: #EEEEEE;
       }
     }
@@ -316,7 +324,7 @@ export default {
   .content {
     display: flex;
     flex-direction: column;
-    height: 90vh;
+    height: 80vh;
 
     .claim-total-money {
       color: #ff9900;
@@ -334,9 +342,6 @@ export default {
         top: 0;
         left: 0;
       }
-    }
-    .checkbox-group{
-      margin-bottom: 100px;
     }
 
     .claim-item {
@@ -397,6 +402,7 @@ export default {
           flex-direction: row;
           align-items: center;
           flex: 1;
+
           .right-info {
             display: flex;
             flex-direction: column;
@@ -420,6 +426,7 @@ export default {
               padding-top: 10px;
             }
           }
+
           &-money {
             font-family: Avenir, Helvetica, Arial, sans-serif;
             font-weight: 600;
@@ -429,40 +436,40 @@ export default {
         }
       }
     }
-    .claim-footer{
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100vw;
-      background-color: #f6f6f6;
-      height: 100px;
+  }
+}
+.claim-footer {
+  width: 100vw;
+  background-color: #f6f6f6;
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .left {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-left: 20px;
+
+    &-text {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      .left{
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        margin-left: 20px;
-        &-text{
-          display: flex;
-          align-items: center;
-          font-size: 24px;
-        }
-      }
-      .claim-button{
-        height: 70px;
-        margin-right: 20px;
-        border-radius: 40px;
-        width: 200px;
-        background: linear-gradient(-90deg, rgba(38, 196, 65, 1), rgba(1, 174, 50, 1));
-        font-size: 24px;
-        font-weight: bold;
-        color: #FFFFFF;
-        line-height: 70px;
-        text-align: center;
-      }
+      font-size: 24px;
     }
+  }
+
+  .claim-button {
+    height: 70px;
+    margin-right: 20px;
+    border-radius: 40px;
+    width: 200px;
+    background: linear-gradient(-90deg, rgba(38, 196, 65, 1), rgba(1, 174, 50, 1));
+    font-size: 24px;
+    font-weight: bold;
+    color: #FFFFFF;
+    line-height: 70px;
+    text-align: center;
   }
 }
 </style>
