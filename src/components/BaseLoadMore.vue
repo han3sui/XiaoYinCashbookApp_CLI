@@ -15,7 +15,7 @@ export default {
     // 图标样式，支持：circle/flower
     iconType: {
       type: String,
-      default: 'circle'
+      default: 'flower'
     },
     // 加载状态，支持：loading/loadmore/finished/error
     status: {

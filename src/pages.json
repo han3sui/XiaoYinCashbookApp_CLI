@@ -65,7 +65,8 @@
     }, {
       "path": "pages/check/check",
       "style": {
-        "navigationBarTitleText": "核账记录"
+        "navigationBarTitleText": "核账记录",
+        "onReachBottomDistance":50
       }
     }
   ],

@@ -63,7 +63,7 @@ export function updateCheckTime (content) {
  * 获取核账记录
  * @returns {Promise<unknown>}
  */
-export function checkList () {
+export function checkList (params) {
   const link = `${url}/check`
-  return request(link)
+  return request(link, 'GET', { ...params, _loading: false })
 }
