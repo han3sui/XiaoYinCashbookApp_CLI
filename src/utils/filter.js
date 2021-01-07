@@ -16,7 +16,7 @@ export function getIconUrl (name) {
  * @param format
  * @returns {string}
  */
-export function dateFormat (utime, format = 'YYYY-MM-DD HH:mm:ss') {
+export function formatDate (utime, format = 'YYYY-MM-DD HH:mm:ss') {
   if (!utime) {
     return ''
   } else {

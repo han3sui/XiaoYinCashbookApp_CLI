@@ -98,16 +98,6 @@ export function getDate (type) {
   return `${year}-${month}-${day}`
 }
 
-/**
- * 计算适配px值
- * @param px，传入750宽度下px值
- * @returns {number}
- */
-export function getRealPx (px = 60) {
-  const screenWitdh = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
-  return ((screenWitdh * 2) / 750) * px
-}
-
 // 定义全局zIndex值
 let zIndex = 2000
 /**
@@ -126,7 +116,7 @@ export function getZIndex () {
  * @param format
  * @returns {string}
  */
-export function dateFormat (utime, format = 'YYYY-MM-DD HH:mm:ss') {
+export function formatDate (utime, format = 'YYYY-MM-DD HH:mm:ss') {
   if (!utime) {
     return ''
   } else {

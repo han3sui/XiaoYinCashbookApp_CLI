@@ -47,8 +47,8 @@
       </view>
     </view>
     <base-popup position="bottom" :safe-area-inset-bottom="true" v-model="pickerVisible">
+      <view class="account-title">选择报销入账账户</view>
       <scroll-view scroll-y class="account-scroll">
-        <view class="account-scroll-title">选择报销入账账户</view>
         <view class="account-scroll-content">
           <view class="account-list-item" v-for="(item,index) in accountList" :key="index"
                 @tap="handleSelectAccount(item)">
@@ -109,11 +109,16 @@ export default {
     },
     contentStyle () {
       return {
+        // height: this.subCurrent === 0 ? '80vh' : '90vh'
         height: this.subCurrent === 0 ? 'calc(90vh- 100rpx)' : '90vh'
       }
     },
     checkAllStatus () {
-      return this.checked.length === this.claimList[1].length
+      if (!this.claimList[1].length) {
+        return false
+      } else {
+        return this.checked.length === this.claimList[1].length
+      }
     }
   },
   onShow () {
@@ -261,34 +266,26 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.hide-after {
-  &:after {
-    display: none;
-  }
-}
-
-.account-scroll {
+.account-title{
+  font-size: 26px;
+  font-weight: bold;
+  padding: 30px 0 30px 20px;
   background-color: #f8f8f8;
-
-  &-title {
-    font-size: 26px;
-    font-weight: bold;
-    margin: 30px 0 30px 20px;
-  }
+}
+.account-scroll {
+  max-height: 55vh;
 
   &-content {
     display: flex;
     flex-direction: column;
     padding: 0 20px;
     background: #FFF;
-    max-height: 60vh;
-    overflow-y: scroll;
 
     .account-list-item {
-      padding: 25px 10px;
       display: flex;
-      font-size: 24px;
       position: relative;
+      padding: 25px 10px;
+      font-size: 24px;
 
       &:not(:last-child):after {
         position: absolute;
@@ -310,6 +307,9 @@ export default {
 }
 
 .claim {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   .subsection {
     display: flex;
     align-items: center;
@@ -317,14 +317,15 @@ export default {
     height: 10vh;
   }
 
-  .account-picker {
-    height: 20vh;
-  }
-
   .content {
     display: flex;
     flex-direction: column;
     height: 80vh;
+    .hide-after {
+      &:after {
+        display: none;
+      }
+    }
 
     .claim-total-money {
       color: #ff9900;
@@ -441,8 +442,8 @@ export default {
 .claim-footer {
   width: 100vw;
   background-color: #f6f6f6;
-  height: 100px;
   display: flex;
+  flex: 1;
   justify-content: space-between;
   align-items: center;
 

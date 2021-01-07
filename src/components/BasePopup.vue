@@ -1,5 +1,5 @@
 <template>
-  <view class="base-popup" v-if="visible">
+  <view class="base-popup" v-if="visible" @touchmove.stop.prevent>
     <view class="overlay" :style="[overlayStyle,overlayAnimation]" :class="overlayClass" @tap="overlayClick"/>
     <view class="popup-body" :style="[bodyStyle]" :class="[safeAreaInsetBottom?'safe-area-inset-bottom':'',bodyClass]">
       <slot/>
@@ -136,38 +136,6 @@ export default {
     visible (e) {
       this.$emit('input', e)
     }
-    // value: {
-    //   immediate: true,
-    //   handler (e) {
-    //     if (e) {
-    //       this.open()
-    //     } else if (!this.closeFromInner) {
-    //       this.close()
-    //     }
-    //     this.closeFromInner = false
-    //   }
-    // },
-    // visible: {
-    //   immediate: true,
-    //   handler (e) {
-    //     this.$emit('input', e)
-    //   }
-    // }
-    // visible: {
-    //   immediate: true,
-    //   handler (e) {
-    //     this.$emit('input', e)
-    //     if (e) {
-    //       this.bodyClass = `pop-body-slide-${this.position}-in`
-    //       if (this.overlay) {
-    //         // this.overlayAnimation.animation = `fadeIn ${this.duration}s forwards`
-    //         this.overlayClass = 'overlay-fade-in'
-    //       }
-    //     } else {
-    //       this.close()
-    //     }
-    //   }
-    // }
   },
   methods: {
     overlayClick () {

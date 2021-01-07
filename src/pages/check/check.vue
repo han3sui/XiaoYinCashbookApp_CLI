@@ -5,7 +5,7 @@
         <view class="check-item" v-for="(item,index) in list" :key="index">
           <view class="check-item-meta" @tap="handleExpand(item.id)">
             <view class="check-item-meta-left">
-              <text class="check-item-meta-date">核账时间：{{ item.time|dateFormat }}</text>
+              <text class="check-item-meta-date">核账时间：{{ item.time|formatDate }}</text>
               <view class="check-item-meta-money">
                 <text>资产：{{item.all_balance}}</text>
                 <text>负债：{{item.all_liabilities}}</text>
