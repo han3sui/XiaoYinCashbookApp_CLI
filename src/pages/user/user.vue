@@ -75,10 +75,8 @@
 <script>
 import BaseCell from '../../components/BaseCell.vue'
 import BaseCellItem from '../../components/BaseCellItem.vue'
-import { getAllDays } from '../../apis/detail'
-import {
-  doLogin, getUserInfo
-} from '../../utils/apis.js'
+import { getAllDays } from '@/apis/detail'
+import { doLogin, getUserInfo } from '@/utils/apis'
 
 export default {
   onShareAppMessage (res) {

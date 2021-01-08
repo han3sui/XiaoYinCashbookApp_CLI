@@ -80,9 +80,11 @@ export function chart (params = {}) {
  * @param time
  * @returns {Promise | Promise<unknown>}
  */
-export function isExistUnchek (time) {
+export function isExistUncheck (time) {
   const link = `${url}/uncheck/${time}`
-  return request(link, 'GET')
+  return request(link, 'GET', {
+    _loading: false
+  })
 }
 
 /**

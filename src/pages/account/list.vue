@@ -44,7 +44,7 @@ import BaseCell from '../../components/BaseCell.vue'
 import BaseCellItem from '../../components/BaseCellItem.vue'
 import * as account from '../../apis/account.js'
 import { updateCheckTime } from '@/apis/user'
-import { isExistUnchek } from '@/apis/detail'
+import { isExistUncheck } from '@/apis/detail'
 import { initAccount } from '@/utils/apis'
 
 export default {
@@ -88,7 +88,7 @@ export default {
     },
     // 是否存在未核账单
     async isExistUncheck () {
-      this.checkStatus = await isExistUnchek(this.checkTime)
+      this.checkStatus = await isExistUncheck(this.checkTime)
     },
     // 本地时间工具类
     getLocalTime (nS) {

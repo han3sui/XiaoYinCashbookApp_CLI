@@ -2,7 +2,7 @@
   <view class="search">
     <view class="search-head">
       <view class="search-head-wrap">
-        <base-icon class="search-icon" name="search" color="#808080"/>
+        <base-icon class="search-icon" name="search" color="#808080" size="40"/>
         <input class="search-input" :focus="focusStatus" @focus="inputStatus='focus'" @blur="inputStatus='blur'" @confirm="handleSearch" confirm-type="search" v-model="remark" maxlength="10" placeholder="搜索备注" placeholder-style="font-size:28rpx"/>
         <base-icon v-show="clearStatus" class="search-icon" name="close" color="#808080" @tap="clearSearch"/>
       </view>
@@ -45,6 +45,10 @@ export default {
         setTimeout(() => {
           this.clearStatus = true
         }, 100)
+      } else {
+        setTimeout(() => {
+          this.clearStatus = false
+        }, 100)
       }
     }
   },
@@ -74,7 +78,14 @@ export default {
       if (this.remark === '') {
         this.$util.toastError('请输入搜索内容')
       } else {
-        this.params.remark = this.remark
+        this.params = {
+          year: 0,
+          month: 0,
+          account_id: 0,
+          category_id: 0,
+          remark: this.remark,
+          check_time: 0
+        }
       }
     }
   }

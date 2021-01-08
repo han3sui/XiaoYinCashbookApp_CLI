@@ -21,10 +21,7 @@
           <view :id="`node-id-${item.id}`">
             <view class="check-item-content" v-for="(v1,k1) in item.list" :key="k1">
               <view class="left">
-                <base-icon :name="v1.icon" margin-right="18" :title="v1.name" />
-                <view class="left-info">
-                  <text class="left-info-title">{{v1.name}}</text>
-                </view>
+                <base-icon :name="v1.icon" :title="v1.name" :label="v1.name" :label-margin-left="18" size="40" />
               </view>
               <view class="right">
                 <text class="right-money">{{v1.balance}}</text>
@@ -64,11 +61,6 @@ export default {
         // 分页条数
         page_size: 20
       }
-    }
-  },
-  watch: {
-    list () {
-      this.initNodeHeight()
     }
   },
   onShow () {
@@ -113,6 +105,7 @@ export default {
           this.list[index].time = item.update_time
           this.list[index].id = item.id
         })
+        this.initNodeHeight()
       }).catch(() => {
         this.loadStatus = 'error'
       })
@@ -133,7 +126,6 @@ export default {
 .check-content{
   display: flex;
   flex-direction: column;
-  height: 100vh;
   .check-item{
     display: flex;
     flex-direction: column;
@@ -202,25 +194,6 @@ export default {
         display: flex;
         flex-direction: row;
         align-items: center;
-        .left-info{
-          display: flex;
-          flex-direction: column;
-          align-content: flex-start;
-          &-title{
-            font-size: 28px;
-            color: #3b4144;
-          }
-          &-remark{
-            font-size: 24px;
-            color: #999;
-            padding-top: 10px;
-          }
-          &-account{
-            font-size: 24px;
-            color: #999;
-            padding-top: 10px;
-          }
-        }
       }
       .right{
         &-money{
