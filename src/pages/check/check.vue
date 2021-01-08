@@ -15,7 +15,9 @@
               <text>余额：{{item.all_surplus}}</text>
             </view>
           </view>
-          <base-icon class="arrow-down" :class="{'arrow-down-active':item.id===activeId}" name="arrow-down" size="50" color="#969799"/>
+          <view class="arrow-down" :class="{'arrow-down-active':item.id===activeId}">
+            <base-icon name="arrow-down" size="50" color="#969799"/>
+          </view>
         </view>
         <view class="check-item-wrap" :style="[{height:item.id===activeId?(nodeHeight['node-id-'+item.id]+'px'):'0'}]">
           <view :id="`node-id-${item.id}`">
@@ -100,10 +102,8 @@ export default {
         if (res.length < this.paging.page_size) {
           this.loadStatus = 'finished'
         }
-        res.forEach((item, index) => {
-          this.list.push(JSON.parse(item.data))
-          this.list[index].time = item.update_time
-          this.list[index].id = item.id
+        res.forEach(item => {
+          this.list.push({ ...JSON.parse(item.data), time: item.update_time, id: item.id })
         })
         this.initNodeHeight()
       }).catch(() => {
@@ -161,6 +161,7 @@ export default {
         }
       }
       .arrow-down{
+        height: 50px;
         transition: all .3s;
       }
       .arrow-down-active{
