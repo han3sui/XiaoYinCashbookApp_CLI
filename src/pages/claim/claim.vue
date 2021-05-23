@@ -37,6 +37,7 @@
             <checkbox style="transform:scale(0.8)" color="#007aff"
                       :checked="checkAllStatus"/>
             全选
+            <view v-if="checked.length">，合计：{{checkedMoney}}</view>
           </label>
         </checkbox-group>
       </view>
@@ -96,7 +97,9 @@ export default {
       // 当前报销明细ID,
       activeDetailId: 0,
       // 批量选择数组
-      checked: []
+      checked: [],
+      // 选中合计金额
+      checkedMoney: 0
     }
   },
   computed: {
@@ -119,6 +122,15 @@ export default {
       } else {
         return this.checked.length === this.claimList[1].length
       }
+    }
+  },
+  watch: {
+    checked (newValue) {
+      let money = 0
+      newValue.forEach(item => {
+        money = this.$util.floatAdd(money, this.claimList[1].filter(a => a.id === Number(item))[0].money)
+      })
+      this.checkedMoney = money
     }
   },
   onShow () {
