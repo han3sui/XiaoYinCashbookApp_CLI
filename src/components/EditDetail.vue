@@ -384,7 +384,8 @@ export default {
           this.$util.toastSuccess('保存成功')
           Object.assign(this.detailData, {
             money: 0,
-            remark: ''
+            remark: '',
+            claim: 0
           })
           this.keyboardShow = false
         })
