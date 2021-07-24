@@ -428,6 +428,9 @@ export default {
       align-items: center;
       width: 70%;
       color: #808080;
+      .keyboard-meta-claim{
+        width: 130px;
+      }
       .keyboard-meta-remark{
         display: flex;
         flex-direction: row;
