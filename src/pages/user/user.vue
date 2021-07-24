@@ -1,44 +1,17 @@
 <template>
   <view>
     <view class="head">
-      <template v-if="token">
-        <template v-if="infoAuth===false">
-          <view class="avatar">
-            <img alt="" src="../../static/images/account.png"/>
-          </view>
-          <view class="info-wrap">
-            <view class="auth-tips">
-              <text>点击授权用户信息</text>
-              <button class="auth-button" open-type="getUserInfo" @getuserinfo="login"></button>
-            </view>
-            <view class="tips">
-              <text>已记账{{allDays}}天</text>
-            </view>
-          </view>
-        </template>
-        <template v-else>
-          <view class="avatar">
-            <img alt="" :src="userInfo.avatarUrl"/>
-          </view>
-          <view class="info-wrap">
-            <view class="name">
-              <text>{{ userInfo.nickName }}</text>
-            </view>
-            <view class="tips">
-              <text>已记账{{allDays}}天</text>
-            </view>
-          </view>
-        </template>
-      </template>
-      <template v-else>
-        <view class="avatar">
-          <img alt="" src="../../static/images/account.png"/>
+      <view class="avatar">
+        <img alt="" :src="userInfo.avatarUrl||'../../static/images/account.png'">
+      </view>
+      <view class="info-wrap">
+        <view class="auth-tips" :class="[name.auth?'':'auth-tips-underline']">
+          <text @click="login">{{ name.name }}</text>
         </view>
-        <view class="login-tips">
-          <text>游客，点击登录</text>
-          <button class="login-button" open-type="getUserInfo" @getuserinfo="login"></button>
+        <view class="tips">
+          <text>已记账{{allDays||0}}天</text>
         </view>
-      </template>
+      </view>
     </view>
     <view class="body">
       <view class="cell-wrap">
@@ -91,8 +64,7 @@ export default {
   },
   data () {
     return {
-      allDays: 0,
-      infoAuth: null
+      allDays: 0
     }
   },
   computed: {
@@ -101,17 +73,21 @@ export default {
     },
     userInfo () {
       return this.$store.state.userInfo
-    }
-  },
-  onLoad () {
-    uni.getSetting({
-      success: result => {
-        this.infoAuth = result.authSetting['scope.userInfo'] === true
-      },
-      fail: e => {
-        this.infoAuth = true
+    },
+    name () {
+      const nameInfo = {
+        name: '',
+        auth: false
       }
-    })
+      if (['微信用户', ''].includes(this.userInfo.nickName)) {
+        nameInfo.name = '点击更新'
+        nameInfo.auth = false
+      } else {
+        nameInfo.name = this.userInfo.nickName
+        nameInfo.auth = true
+      }
+      return nameInfo
+    }
   },
   onShow () {
     this.initAllDays()
@@ -124,7 +100,6 @@ export default {
     // 授权的同时登录
     login () {
       getUserInfo().then(doLogin)
-      this.infoAuth = true
     },
     // 前往报销管理页面
     toClaim () {
@@ -214,21 +189,9 @@ page {
     .auth-tips {
       font-size: 28px;
       color: #999;
+    }
+    .auth-tips-underline{
       text-decoration: underline;
-      position: relative;
-      .auth-button {
-        background: none;
-        border: none;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        &:after {
-          background: none;
-          border: none;
-        }
-      }
     }
   }
   .login-tips {

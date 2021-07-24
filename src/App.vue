@@ -1,6 +1,6 @@
 <script>
 import {
-  checkSession, doLogin, getUserInfo, checkWxAuth, initUserInfo, initCategory, initAccount
+  checkSession, doLogin, initUserInfo, initCategory, initAccount
 } from './utils/apis.js'
 import store from './store'
 
@@ -9,7 +9,6 @@ export default {
     store.commit('SET_TOKEN', uni.getStorageSync('token'))
     initCategory()
     initAccount()
-    checkWxAuth().then(getUserInfo)
     checkSession().catch(doLogin)
   },
   onShow: function () {

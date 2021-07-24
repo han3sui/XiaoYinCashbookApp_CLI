@@ -55,16 +55,14 @@ export function checkWxAuth () {
  */
 export function getUserInfo () {
   return new Promise((resolve, reject) => {
-    util.loading('登录中...')
-    uni.getUserInfo({
-      provider: 'weixin',
+    uni.getUserProfile({
+      desc: '用于个人信息展示',
       success (info) {
         store.commit('SET_USERINFO', {
           nickName: info.userInfo.nickName,
           avatarUrl: info.userInfo.avatarUrl
         })
         resolve('获取用户信息成功')
-        util.hideLoading()
       },
       fail (err) {
         reject(err)
