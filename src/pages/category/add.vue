@@ -17,7 +17,7 @@
       <view v-if="main===false" class="form-item">
         <view class="title">分类图标</view>
         <view class="icon-wrap" @tap="toIconList">
-          <img :src="icon|getIconUrl"/>
+          <img :src="icon|getIconUrl" alt=""/>
           <base-icon name="arrow-right"/>
         </view>
       </view>
@@ -34,7 +34,7 @@
 <script>
 import * as category from '../../apis/category'
 import BaseIcon from '../../components/BaseIcon'
-import { initCategory } from '../../utils/apis'
+import { initCategory } from '@/utils/apis'
 
 export default {
   name: 'add',

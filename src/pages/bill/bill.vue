@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { bill } from '../../apis/detail'
+import { bill } from '@/apis/detail'
 import BaseEmpty from '../../components/BaseEmpty'
 
 export default {

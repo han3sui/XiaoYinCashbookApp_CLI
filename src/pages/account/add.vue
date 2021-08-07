@@ -13,7 +13,7 @@
       <view class="form-item">
         <view class="title">账户图标</view>
         <view class="icon-wrap" @tap="toIconList">
-          <img :src="icon|getIconUrl"/>
+          <img :src="icon|getIconUrl" alt=""/>
           <base-icon name="arrow-right"/>
         </view>
       </view>
