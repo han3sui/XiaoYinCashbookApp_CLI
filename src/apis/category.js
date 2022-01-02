@@ -1,16 +1,16 @@
-import request from '../utils/request.js'
-import config from '@/utils/config'
-const url = `${config.API_VERSION}/category`
+import request from "../utils/request.js";
+import config from "@/utils/config";
+const url = `${config.API_VERSION}/category`;
 
 /**
  * 分类列表
  * @returns {Promise | Promise<unknown>}
  */
-export function list () {
-  const link = `${url}`
-  return request(link, 'GET', {
-    _loading: false
-  })
+export function list() {
+    const link = `${url}`;
+    return request(link, "GET", {
+        _loading: false
+    });
 }
 
 /**
@@ -18,9 +18,9 @@ export function list () {
  * @param id
  * @returns {Promise<unknown>}
  */
-export function del (id) {
-  const link = `${url}/${id}`
-  return request(link, 'DELETE')
+export function del(id) {
+    const link = `${url}/${id}`;
+    return request(link, "DELETE");
 }
 
 /**
@@ -28,9 +28,9 @@ export function del (id) {
  * @param data
  * @returns {Promise | Promise<unknown>}
  */
-export function save (data) {
-  const link = `${url}`
-  return request(link, 'POST', data)
+export function save(data) {
+    const link = `${url}`;
+    return request(link, "POST", data);
 }
 
 /**
@@ -38,9 +38,9 @@ export function save (data) {
  * @param data
  * @returns {Promise<unknown>}
  */
-export function update (data) {
-  const link = `${url}/${data.id}`
-  return request(link, 'PUT', data)
+export function update(data) {
+    const link = `${url}/${data.id}`;
+    return request(link, "PUT", data);
 }
 
 /**
@@ -48,7 +48,7 @@ export function update (data) {
  * @param id
  * @returns {Promise<unknown>}
  */
-export function getDetailsCount (id) {
-  const link = `${url}/details/count/${id}`
-  return request(link, 'GET')
+export function getDetailsCount(id) {
+    const link = `${url}/details/count/${id}`;
+    return request(link, "GET");
 }

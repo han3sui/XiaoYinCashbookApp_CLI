@@ -1,16 +1,16 @@
-import request from '../utils/request.js'
-import config from '@/utils/config'
-const url = `${config.API_VERSION}/details`
+import request from "../utils/request.js";
+import config from "@/utils/config";
+const url = `${config.API_VERSION}/details`;
 
 /**
  * 明细列表
  * @param params
  * @returns {Promise | Promise<unknown>}
  */
-export function search (params = {}) {
-  const link = `${url}`
-  params._loading = false
-  return request(link, 'GET', params)
+export function search(params = {}) {
+    const link = `${url}`;
+    params._loading = false;
+    return request(link, "GET", params);
 }
 
 /**
@@ -18,10 +18,10 @@ export function search (params = {}) {
  * @param params
  * @returns {Promise<unknown>}
  */
-export function listMoney (params = {}) {
-  const link = `${url}/money`
-  params._loading = false
-  return request(link, 'GET', params)
+export function listMoney(params = {}) {
+    const link = `${url}/money`;
+    params._loading = false;
+    return request(link, "GET", params);
 }
 
 /**
@@ -29,9 +29,9 @@ export function listMoney (params = {}) {
  * @param params
  * @returns {Promise | Promise<unknown>}
  */
-export function save (params = {}) {
-  const link = `${url}`
-  return request(link, 'POST', params)
+export function save(params = {}) {
+    const link = `${url}`;
+    return request(link, "POST", params);
 }
 
 /**
@@ -39,9 +39,9 @@ export function save (params = {}) {
  * @param id
  * @returns {Promise | Promise<unknown>}
  */
-export function del (id) {
-  const link = `${url}/${id}`
-  return request(link, 'DELETE')
+export function del(id) {
+    const link = `${url}/${id}`;
+    return request(link, "DELETE");
 }
 
 /**
@@ -50,9 +50,9 @@ export function del (id) {
  * @param params
  * @returns {Promise | Promise<unknown>}
  */
-export function update (id, params = {}) {
-  const link = `${url}/${id}`
-  return request(link, 'PUT', params)
+export function update(id, params = {}) {
+    const link = `${url}/${id}`;
+    return request(link, "PUT", params);
 }
 
 /**
@@ -60,9 +60,9 @@ export function update (id, params = {}) {
  * @param year
  * @returns {Promise | Promise<unknown>}
  */
-export function bill (year) {
-  const link = `${url}/bill/${year}`
-  return request(link, 'GET')
+export function bill(year) {
+    const link = `${url}/bill/${year}`;
+    return request(link, "GET");
 }
 
 /**
@@ -70,9 +70,9 @@ export function bill (year) {
  * @param params
  * @returns {Promise | Promise<unknown>}
  */
-export function chart (params = {}) {
-  const link = `${url}/chart`
-  return request(link, 'GET', params)
+export function chart(params = {}) {
+    const link = `${url}/chart`;
+    return request(link, "GET", params);
 }
 
 /**
@@ -80,22 +80,22 @@ export function chart (params = {}) {
  * @param time
  * @returns {Promise | Promise<unknown>}
  */
-export function isExistUncheck (time) {
-  const link = `${url}/uncheck/${time}`
-  return request(link, 'GET', {
-    _loading: false
-  })
+export function isExistUncheck(time) {
+    const link = `${url}/uncheck/${time}`;
+    return request(link, "GET", {
+        _loading: false
+    });
 }
 
 /**
  * 获取记账总天数
  * @returns {Promise | Promise<unknown>}
  */
-export function getAllDays () {
-  const link = `${url}/days`
-  return request(link, 'GET', {
-    _loading: false
-  })
+export function getAllDays() {
+    const link = `${url}/days`;
+    return request(link, "GET", {
+        _loading: false
+    });
 }
 
 /**
@@ -103,9 +103,9 @@ export function getAllDays () {
  * @param claim,0：非报销，1：待报销，2：已报销
  * @returns {Promise<unknown>}
  */
-export function getClaim (claim = 1) {
-  const link = `${url}/claim/${claim}`
-  return request(link)
+export function getClaim(claim = 1) {
+    const link = `${url}/claim/${claim}`;
+    return request(link);
 }
 
 /**
@@ -113,7 +113,7 @@ export function getClaim (claim = 1) {
  * @param data
  * @returns {Promise | Promise<unknown>}
  */
-export function batchUpdateClaim (data) {
-  const link = `${url}/claim`
-  return request(link, 'POST', data)
+export function batchUpdateClaim(data) {
+    const link = `${url}/claim`;
+    return request(link, "POST", data);
 }

@@ -1,16 +1,15 @@
 <template>
-  <view class="body">
-    <edit-detail/>
-  </view>
+    <view class="body">
+        <edit-detail />
+    </view>
 </template>
 
 <script>
-import EditDetail from '../../components/EditDetail'
+import EditDetail from "../../components/EditDetail";
 export default {
-  name: 'add',
-  components: { EditDetail }
-}
+    name: "Add",
+    components: { EditDetail }
+};
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

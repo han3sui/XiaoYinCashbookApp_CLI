@@ -1,15 +1,13 @@
 <template>
-  <view class="list">
-    <slot/>
-  </view>
+    <view class="list">
+        <slot />
+    </view>
 </template>
 
 <script>
 export default {
-  name: 'BaseList'
-}
+    name: "BaseList"
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
