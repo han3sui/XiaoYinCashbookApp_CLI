@@ -7,6 +7,11 @@
             :current="subCurrent"
             @change="changeSubCurrent"
         />
+        <select-account
+            v-if="detailData.direction !== 3"
+            :active="accountIndex"
+            class="picker-account"
+        ></select-account>
         <view class="menu-wrap" :style="{ height: `${Number(scrollHeight)}px` }">
             <scroll-view class="left" scroll-y :scroll-top="leftScrollTop" scroll-with-animation>
                 <template v-for="(item, index) in category[subListMap[subCurrent].key]">
@@ -119,7 +124,7 @@
                             </picker>
                         </view>
                         <view class="keyboard-menu-view keyboard-menu-account">
-                            <picker
+                            <!-- <picker
                                 v-if="detailData.direction !== 3"
                                 class="picker left-account"
                                 mode="selector"
@@ -129,8 +134,11 @@
                                 @change="handleChangeAccount"
                             >
                                 <view class="picker-text">{{ accountList[accountIndex].name }}</view>
-                            </picker>
-                            <view v-else class="picker-none">-</view>
+                            </picker> -->
+                            <!-- <select-account v-if="detailData.direction !== 3" class="picker-account">{{
+                                accountList[accountIndex].name
+                            }}</select-account>
+                            <view v-else class="picker-none">-</view> -->
                         </view>
                         <view class="keyboard-menu-view keyboard-menu-button" @tap="handleSave">
                             <text class="keyboard-menu-button-text">完成</text>
@@ -146,12 +154,13 @@
 import BaseIcon from "../components/BaseIcon";
 import BaseSubsection from "./BaseSubsection";
 import BasePopup from "./BasePopup";
+import SelectAccount from "./SelectAccount.vue";
 import * as detail from "../apis/detail";
 import { getDate } from "@/utils/util";
 
 export default {
     name: "EditDetail",
-    components: { BasePopup, BaseSubsection, BaseIcon },
+    components: { BasePopup, BaseSubsection, BaseIcon, SelectAccount },
     props: {
         detail: {
             type: Object,
@@ -591,6 +600,17 @@ export default {
                         font-size: 24px;
                         font-weight: 400;
                     }
+                }
+            }
+            .keyboard-menu-account {
+                .picker-account {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                    font-weight: 400;
+                    height: 100%;
+                    width: 100%;
                 }
             }
             .keyboard-menu-button {

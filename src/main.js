@@ -11,6 +11,7 @@ Object.keys(filters).forEach((key) => {
 Vue.config.productionTip = false;
 Vue.prototype.$util = util;
 Vue.prototype.$api = api;
+Vue.prototype.$log = console.log;
 
 App.mpType = "app";
 

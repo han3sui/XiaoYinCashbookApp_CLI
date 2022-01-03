@@ -1,25 +1,29 @@
 <template>
-    <base-popup v-model="visible" position="bottom" :safe-area-inset-bottom="true">
-        <view class="account-title">{{ title }}</view>
-        <scroll-view scroll-y class="account-scroll">
-            <view class="account-scroll-content">
-                <view
-                    v-for="(item, index) in list"
-                    :key="index"
-                    class="account-list-item"
-                    @tap="handleSelectAccount(item)"
-                >
-                    <base-icon
-                        size="40"
-                        :name="item.icon"
-                        :title="item.name"
-                        :label="item.name"
-                        label-margin-left="18"
-                    />
+    <view>
+        <view class="select-account-slot-title" @click="handleShow"> {{ list[active].name }}</view>
+        <base-popup v-model="visible" position="bottom" :safe-area-inset-bottom="true">
+            <view class="account-title">{{ title }}</view>
+            <scroll-view scroll-y class="account-scroll">
+                <view class="account-scroll-content">
+                    <view
+                        v-for="(item, index) in list"
+                        :key="index"
+                        class="account-list-item"
+                        @tap="handleSelectAccount(item)"
+                    >
+                        <base-icon
+                            size="40"
+                            :name="item.icon"
+                            :title="item.name"
+                            label="item.name"
+                            label-margin-left="18"
+                        ></base-icon>
+                        <icon v-if="index === active" type="success" size="16" />
+                    </view>
                 </view>
-            </view>
-        </scroll-view>
-    </base-popup>
+            </scroll-view>
+        </base-popup>
+    </view>
 </template>
 
 <script>
@@ -32,38 +36,48 @@ export default {
         BaseIcon
     },
     props: {
-        visible: {
-            type: Boolean,
-            default: false
-        },
         title: {
             type: String,
-            default: "选择报销入账账户"
+            default: "选择账户"
         },
-        all: {
-            type: Boolean,
-            default: false
+        active: {
+            type: Number,
+            default: -1
         }
+    },
+    data() {
+        return {
+            visible: false
+        };
     },
     computed: {
+        // activeAcount() {
+        //     const account = this.list.filter((item) => item.id === this.id)[0];
+        //     console.log(account, this.list, this.id);
+        //     return account;
+        // },
         list() {
-            if (this.all) {
-                return [
-                    {
-                        id: 0,
-                        name: "保持原账户",
-                        icon: "jinzhi"
-                    },
-                    ...this.$store.state.account
-                ];
-            } else {
-                return this.$store.state.account;
-            }
+            console.log(this.$store.state.account);
+            return this.$store.state.account;
         }
     },
+    // watch: {
+    //     id() {
+    //         console.log("============", this.id);
+    //     },
+    //     visible: {
+    //         handler(e) {
+    //             console.warn("======", e, new Date());
+    //         },
+    //         immediate: true
+    //     }
+    // },
     methods: {
         handleSelectAccount(item) {
             this.$emit("change", item);
+        },
+        handleShow() {
+            this.visible = true;
         }
     }
 };
