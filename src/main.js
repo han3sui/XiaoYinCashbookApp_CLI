@@ -5,6 +5,10 @@ import * as filters from "./utils/filter.js";
 import * as util from "./utils/util.js";
 import * as api from "./utils/apis";
 
+//引入uview
+import uView from "uview-ui";
+Vue.use(uView);
+
 Object.keys(filters).forEach((key) => {
     Vue.filter(key, filters[key]);
 });

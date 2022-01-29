@@ -16,9 +16,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "uni";
-
-/*每个页面公共css */
-@import "iconfont";
-@import "base";
+@import "uview-ui/index.scss";
+@import "./styles/iconfont.css";
+@import "./styles/base.scss";
 </style>

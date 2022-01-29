@@ -6,9 +6,9 @@
             :list="subList"
             :current="subCurrent"
             @change="changeSubCurrent"
-        />
+        ></base-subsection>
         <select-account
-            v-if="detailData.direction !== 3"
+            v-if="detailData.direction === 3"
             :active="accountIndex"
             class="picker-account"
         ></select-account>
@@ -64,12 +64,7 @@
                 </template>
             </scroll-view>
         </view>
-        <base-popup
-            v-model="keyboardShow"
-            :close-by-overlay="true"
-            :safe-area-inset-bottom="safeArea"
-            position="bottom"
-        >
+        <u-popup :show="keyboardShow" mode="bottom" round="8">
             <view class="keyboard">
                 <view class="keyboard-meta">
                     <view class="keyboard-meta-left">
@@ -124,6 +119,7 @@
                             </picker>
                         </view>
                         <view class="keyboard-menu-view keyboard-menu-account">
+                            <u-calendar :show="calendarStatus"></u-calendar>
                             <!-- <picker
                                 v-if="detailData.direction !== 3"
                                 class="picker left-account"
@@ -146,21 +142,20 @@
                     </view>
                 </view>
             </view>
-        </base-popup>
+        </u-popup>
     </view>
 </template>
 
 <script>
 import BaseIcon from "../components/BaseIcon";
 import BaseSubsection from "./BaseSubsection";
-import BasePopup from "./BasePopup";
 import SelectAccount from "./SelectAccount.vue";
 import * as detail from "../apis/detail";
 import { getDate } from "@/utils/util";
 
 export default {
     name: "EditDetail",
-    components: { BasePopup, BaseSubsection, BaseIcon, SelectAccount },
+    components: { BaseSubsection, BaseIcon, SelectAccount },
     props: {
         detail: {
             type: Object,
@@ -188,6 +183,8 @@ export default {
     },
     data() {
         return {
+            // 日历组件
+            calendarStatus: false,
             // 账户选择
             accountIndex: 0,
             // 虚拟键盘状态
@@ -415,6 +412,7 @@ export default {
             } else {
                 this.keyboardShow = true;
             }
+            console.log(this.keyboardShow);
         },
         // 顶部tab点击
         changeSubCurrent(e) {

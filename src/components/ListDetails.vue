@@ -131,7 +131,7 @@ export default {
             return this.$store.state.userInfo.checkTime;
         },
         // 自定义的内联样式
-        customStyle() {
+        listDetailStyle() {
             return {
                 height: `${this.height}vh`
             };

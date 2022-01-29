@@ -36,6 +36,7 @@
                 </view>
             </view>
         </view>
+        <u-button text="月落"></u-button>
         <list-details :params="params" path="index" @change="listMoney" @refresh="handleRefresh" />
     </view>
 </template>

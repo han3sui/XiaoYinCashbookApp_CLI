@@ -1,6 +1,6 @@
 <template>
     <view class="body">
-        <edit-detail />
+        <edit-detail></edit-detail>
     </view>
 </template>
 
