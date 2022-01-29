@@ -1,7 +1,7 @@
 <template>
-    <view>
+    <view class="select-account">
         <view class="select-account-slot-title" @click="handleShow"> {{ list[active].name }}</view>
-        <u-popup :show="visible" position="bottom" :safe-area-inset-bottom="true">
+        <u-popup :show="visible" @close="visible = false">
             <view class="account-title">{{ title }}</view>
             <scroll-view scroll-y class="account-scroll">
                 <view class="account-scroll-content">
@@ -9,15 +9,16 @@
                         v-for="(item, index) in list"
                         :key="index"
                         class="account-list-item"
-                        @tap="handleSelectAccount(item)"
+                        @tap="handleSelectAccount(index)"
                     >
-                        <base-icon
+                        <text>{{ item.name }}</text>
+                        <!-- <base-icon
                             size="40"
                             :name="item.icon"
                             :title="item.name"
-                            label="item.name"
+                            :label="item.name"
                             label-margin-left="18"
-                        ></base-icon>
+                        ></base-icon> -->
                         <icon v-if="index === active" type="success" size="16" />
                     </view>
                 </view>
@@ -51,30 +52,14 @@ export default {
         };
     },
     computed: {
-        // activeAcount() {
-        //     const account = this.list.filter((item) => item.id === this.id)[0];
-        //     console.log(account, this.list, this.id);
-        //     return account;
-        // },
         list() {
-            console.log(this.$store.state.account);
             return this.$store.state.account;
         }
     },
-    // watch: {
-    //     id() {
-    //         console.log("============", this.id);
-    //     },
-    //     visible: {
-    //         handler(e) {
-    //             console.warn("======", e, new Date());
-    //         },
-    //         immediate: true
-    //     }
-    // },
     methods: {
-        handleSelectAccount(item) {
-            this.$emit("change", item);
+        handleSelectAccount(index) {
+            this.$emit("update:active", index);
+            this.visible = false;
         },
         handleShow() {
             this.visible = true;
@@ -84,6 +69,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.select-account {
+    width: 100%;
+    height: 100%;
+    .select-account-slot-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+}
 .account-title {
     font-size: 26px;
     font-weight: bold;
@@ -91,7 +87,8 @@ export default {
     background-color: #f8f8f8;
 }
 .account-scroll {
-    max-height: 55vh;
+    min-height: 50vh;
+    max-height: 65vh;
 
     &-content {
         display: flex;
@@ -101,6 +98,7 @@ export default {
 
         .account-list-item {
             display: flex;
+            justify-content: space-between;
             position: relative;
             padding: 25px 10px;
             font-size: 24px;

@@ -7,11 +7,6 @@
             :current="subCurrent"
             @change="changeSubCurrent"
         ></base-subsection>
-        <select-account
-            v-if="detailData.direction === 3"
-            :active="accountIndex"
-            class="picker-account"
-        ></select-account>
         <view class="menu-wrap" :style="{ height: `${Number(scrollHeight)}px` }">
             <scroll-view class="left" scroll-y :scroll-top="leftScrollTop" scroll-with-animation>
                 <template v-for="(item, index) in category[subListMap[subCurrent].key]">
@@ -64,7 +59,7 @@
                 </template>
             </scroll-view>
         </view>
-        <u-popup :show="keyboardShow" mode="bottom" round="8">
+        <u-popup :show="true" @close="keyboardShow = false">
             <view class="keyboard">
                 <view class="keyboard-meta">
                     <view class="keyboard-meta-left">
@@ -106,35 +101,23 @@
                         </view>
                     </view>
                     <view class="keyboard-menu">
-                        <view class="keyboard-menu-view keyboard-menu-date">
-                            <picker
-                                class="picker"
-                                mode="date"
-                                :value="detailData.time"
-                                :start="dateStart"
-                                :end="dateEnd"
-                                @change="handleChangeDate"
-                            >
-                                <view class="picker-text">{{ detailData.time }}</view>
-                            </picker>
+                        <view class="keyboard-menu-view keyboard-menu-date" @tap="calendarStatus = true">
+                            <view class="picker-date">{{ detailData.time }}</view>
+                            <u-calendar
+                                :show="calendarStatus"
+                                :show-confirm="false"
+                                :close-on-click-overlay="true"
+                                @confirm="handleChangeDate"
+                                @close="calendarStatus = false"
+                            ></u-calendar>
                         </view>
                         <view class="keyboard-menu-view keyboard-menu-account">
-                            <u-calendar :show="calendarStatus"></u-calendar>
-                            <!-- <picker
+                            <select-account
                                 v-if="detailData.direction !== 3"
-                                class="picker left-account"
-                                mode="selector"
-                                :value="accountIndex"
-                                :range="accountList"
-                                range-key="name"
-                                @change="handleChangeAccount"
-                            >
-                                <view class="picker-text">{{ accountList[accountIndex].name }}</view>
-                            </picker> -->
-                            <!-- <select-account v-if="detailData.direction !== 3" class="picker-account">{{
-                                accountList[accountIndex].name
-                            }}</select-account>
-                            <view v-else class="picker-none">-</view> -->
+                                :active.sync="accountIndex"
+                                class="picker-account"
+                            ></select-account>
+                            <view v-else class="picker-none">-</view>
                         </view>
                         <view class="keyboard-menu-view keyboard-menu-button" @tap="handleSave">
                             <text class="keyboard-menu-button-text">完成</text>
@@ -143,6 +126,9 @@
                 </view>
             </view>
         </u-popup>
+        <!-- :default-date="detailData.time"
+            :min-date="dateStart"
+            :max-date="dateEnd" -->
     </view>
 </template>
 
@@ -430,7 +416,10 @@ export default {
         },
         // 选择时间
         handleChangeDate(e) {
-            this.detailData.time = e.target.value;
+            if (Array.isArray(e) && e[0]) {
+                this.detailData.time = e[0];
+                this.calendarStatus = false;
+            }
         },
         // 选择账户
         handleChangeAccount(e) {
@@ -574,6 +563,13 @@ export default {
             flex-direction: column;
             width: 25%;
             overflow: hidden;
+            // .picker-none {
+            //     display: flex;
+            //     align-items: center;
+            //     justify-content: center;
+            //     height: 100%;
+            //     width: 100%;
+            // }
             &-view {
                 position: relative;
                 height: 80px;
@@ -598,6 +594,17 @@ export default {
                         font-size: 24px;
                         font-weight: 400;
                     }
+                }
+            }
+            .keyboard-menu-date {
+                .picker-date {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                    font-weight: 400;
+                    height: 100%;
+                    width: 100%;
                 }
             }
             .keyboard-menu-account {
