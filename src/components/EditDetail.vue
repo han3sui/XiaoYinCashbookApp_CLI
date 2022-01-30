@@ -105,7 +105,7 @@
                             <view class="picker-date">{{ detailData.time }}</view>
                             <u-calendar
                                 :show="calendarStatus"
-                                :show-confirm="false"
+                                :show-confirm="true"
                                 :close-on-click-overlay="true"
                                 @confirm="handleChangeDate"
                                 @close="calendarStatus = false"
@@ -416,9 +416,9 @@ export default {
         },
         // 选择时间
         handleChangeDate(e) {
+            console.log(e);
             if (Array.isArray(e) && e[0]) {
                 this.detailData.time = e[0];
-                this.calendarStatus = false;
             }
         },
         // 选择账户
