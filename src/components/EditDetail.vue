@@ -105,11 +105,17 @@
                             <view class="picker-date">{{ detailData.time }}</view>
                         </view>
                         <view class="keyboard-menu-view keyboard-menu-account">
-                            <select-account
+                            <!-- <select-account
                                 v-if="detailData.direction !== 3"
                                 :active.sync="accountIndex"
                                 class="picker-account"
-                            ></select-account>
+                            ></select-account> -->
+                            <view
+                                v-if="detailData.direction !== 3"
+                                class="picker-account"
+                                @tap="handleShowAccountList"
+                                >{{ accountList[accountIndex].name }}</view
+                            >
                             <view v-else class="picker-none">-</view>
                         </view>
                         <view class="keyboard-menu-view keyboard-menu-button" @tap="handleSave">
@@ -119,7 +125,11 @@
                 </view>
             </view>
         </tui-bottom-popup>
-        <select-account v-model="selectAccountShow"></select-account>
+        <select-account
+            v-model="selectAccountShow"
+            :active="accountIndex"
+            @confirm="handleAccountConfirm"
+        ></select-account>
         <tui-calendar
             ref="calendar"
             is-fixed
@@ -316,6 +326,12 @@ export default {
         }
     },
     methods: {
+        handleAccountConfirm(item, index) {
+            this.accountIndex = index;
+        },
+        handleShowAccountList() {
+            this.selectAccountShow = true;
+        },
         handleShowCalendar() {
             this.$refs.calendar.show();
         },

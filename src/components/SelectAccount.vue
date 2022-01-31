@@ -1,30 +1,27 @@
 <template>
-    <view class="select-account">
-        <view class="select-account-slot-title" @click="handleShow"> {{ list[active].name }}</view>
-        <tui-bottom-popup :show="visible" :height="800" @close="visible = false">
-            <view class="account-title">{{ title }}</view>
-            <scroll-view scroll-y class="account-scroll">
-                <view class="account-scroll-content">
-                    <view
-                        v-for="(item, index) in list"
-                        :key="index"
-                        class="account-list-item"
-                        @tap="handleSelectAccount(index)"
-                    >
-                        <text>{{ item.name }}</text>
-                        <!-- <base-icon
-                            size="40"
-                            :name="item.icon"
-                            :title="item.name"
-                            :label="item.name"
-                            label-margin-left="18"
-                        ></base-icon> -->
-                        <icon v-if="index === active" type="success" size="16" />
-                    </view>
+    <tui-bottom-popup :show="visible" @close="visible = false">
+        <view class="account-title">{{ title }}</view>
+        <scroll-view scroll-y class="account-scroll">
+            <view class="account-scroll-content">
+                <view
+                    v-for="(item, index) in list"
+                    :key="index"
+                    class="account-list-item"
+                    @tap="handleSelectAccount(item, index)"
+                >
+                    <text>{{ item.name }}</text>
+                    <!-- <base-icon
+                        size="40"
+                        :name="item.icon"
+                        :title="item.name"
+                        :label="item.name"
+                        label-margin-left="18"
+                    ></base-icon> -->
+                    <icon v-if="index === active" type="success" size="16" />
                 </view>
-            </scroll-view>
-        </tui-bottom-popup>
-    </view>
+            </view>
+        </scroll-view>
+    </tui-bottom-popup>
 </template>
 
 <script>
@@ -37,6 +34,10 @@ export default {
         BaseIcon
     },
     props: {
+        value: {
+            type: Boolean,
+            default: false
+        },
         title: {
             type: String,
             default: "选择账户"
@@ -46,19 +47,22 @@ export default {
             default: -1
         }
     },
-    data() {
-        return {
-            visible: false
-        };
-    },
     computed: {
         list() {
             return this.$store.state.account;
+        },
+        visible: {
+            get() {
+                return this.value;
+            },
+            set(e) {
+                this.$emit("input", e);
+            }
         }
     },
     methods: {
-        handleSelectAccount(index) {
-            this.$emit("update:active", index);
+        handleSelectAccount(item, index) {
+            this.$emit("confirm", item, index);
             this.visible = false;
         },
         handleShow() {
@@ -69,17 +73,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.select-account {
-    width: 100%;
-    height: 100%;
-    .select-account-slot-title {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-    }
-}
 .account-title {
     font-size: 26px;
     font-weight: bold;

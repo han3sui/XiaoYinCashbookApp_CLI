@@ -117,7 +117,6 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-
     .icon-wrap {
         display: flex;
         align-items: center;
