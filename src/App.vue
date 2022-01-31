@@ -16,7 +16,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import "uview-ui/index.scss";
 @import "./styles/iconfont.css";
 @import "./styles/base.scss";
 </style>

@@ -59,7 +59,7 @@
                 </template>
             </scroll-view>
         </view>
-        <u-popup :show="true" @close="keyboardShow = false">
+        <tui-bottom-popup background-color="transparent" :show="keyboardShow" @close="keyboardShow = false">
             <view class="keyboard">
                 <view class="keyboard-meta">
                     <view class="keyboard-meta-left">
@@ -101,15 +101,8 @@
                         </view>
                     </view>
                     <view class="keyboard-menu">
-                        <view class="keyboard-menu-view keyboard-menu-date" @tap="calendarStatus = true">
+                        <view class="keyboard-menu-view keyboard-menu-date" @tap="handleShowCalendar">
                             <view class="picker-date">{{ detailData.time }}</view>
-                            <u-calendar
-                                :show="calendarStatus"
-                                :show-confirm="true"
-                                :close-on-click-overlay="true"
-                                @confirm="handleChangeDate"
-                                @close="calendarStatus = false"
-                            ></u-calendar>
                         </view>
                         <view class="keyboard-menu-view keyboard-menu-account">
                             <select-account
@@ -125,10 +118,16 @@
                     </view>
                 </view>
             </view>
-        </u-popup>
-        <!-- :default-date="detailData.time"
+        </tui-bottom-popup>
+        <select-account v-model="selectAccountShow"></select-account>
+        <tui-calendar
+            ref="calendar"
+            is-fixed
             :min-date="dateStart"
-            :max-date="dateEnd" -->
+            :max-date="dateEnd"
+            :init-start-date="detailData.time"
+            @change="handleChangeDate"
+        ></tui-calendar>
     </view>
 </template>
 
@@ -169,6 +168,8 @@ export default {
     },
     data() {
         return {
+            // 显示账户列表
+            selectAccountShow: false,
             // 日历组件
             calendarStatus: false,
             // 账户选择
@@ -315,6 +316,9 @@ export default {
         }
     },
     methods: {
+        handleShowCalendar() {
+            this.$refs.calendar.show();
+        },
         /**
          * 左侧menu选择
          * @param index
@@ -398,7 +402,6 @@ export default {
             } else {
                 this.keyboardShow = true;
             }
-            console.log(this.keyboardShow);
         },
         // 顶部tab点击
         changeSubCurrent(e) {
@@ -416,10 +419,7 @@ export default {
         },
         // 选择时间
         handleChangeDate(e) {
-            console.log(e);
-            if (Array.isArray(e) && e[0]) {
-                this.detailData.time = e[0];
-            }
+            this.detailData.time = e.result;
         },
         // 选择账户
         handleChangeAccount(e) {

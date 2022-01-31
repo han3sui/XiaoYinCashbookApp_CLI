@@ -1,7 +1,7 @@
 <template>
     <view class="select-account">
         <view class="select-account-slot-title" @click="handleShow"> {{ list[active].name }}</view>
-        <u-popup :show="visible" @close="visible = false">
+        <tui-bottom-popup :show="visible" :height="800" @close="visible = false">
             <view class="account-title">{{ title }}</view>
             <scroll-view scroll-y class="account-scroll">
                 <view class="account-scroll-content">
@@ -23,7 +23,7 @@
                     </view>
                 </view>
             </scroll-view>
-        </u-popup>
+        </tui-bottom-popup>
     </view>
 </template>
 
