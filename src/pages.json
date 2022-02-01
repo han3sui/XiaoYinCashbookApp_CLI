@@ -87,6 +87,12 @@
                 "navigationBarTitleText": "核账记录",
                 "onReachBottomDistance": 50
             }
+        },
+        {
+            "path": "pages/user/login",
+            "style": {
+                "navigationBarTitleText": "验证码登录"
+            }
         }
     ],
     "globalStyle": {
