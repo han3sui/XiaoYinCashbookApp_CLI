@@ -59,7 +59,7 @@
                 </template>
             </scroll-view>
         </view>
-        <tui-bottom-popup background-color="transparent" :show="keyboardShow" @close="keyboardShow = false">
+        <tui-bottom-popup :show="keyboardShow" @close="keyboardShow = false">
             <view class="keyboard">
                 <view class="keyboard-meta">
                     <view class="keyboard-meta-left">
@@ -128,6 +128,8 @@
         <tui-calendar
             ref="calendar"
             is-fixed
+            active-bg-color="#007aff"
+            btn-type="blue"
             :min-date="dateStart"
             :max-date="dateEnd"
             :init-start-date="detailData.time"

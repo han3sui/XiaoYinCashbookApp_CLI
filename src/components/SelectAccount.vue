@@ -17,7 +17,7 @@
                         :label="item.name"
                         label-margin-left="18"
                     ></base-icon> -->
-                    <icon v-if="index === active" type="success" size="16" />
+                    <icon v-if="index === active" type="success" color="#007aff" size="16" />
                 </view>
             </view>
         </scroll-view>
