@@ -59,7 +59,7 @@
                 </template>
             </scroll-view>
         </view>
-        <tui-bottom-popup background-color="transparent" :show="keyboardShow" @close="keyboardShow = false">
+        <tui-bottom-popup :show="keyboardShow" @close="keyboardShow = false">
             <view class="keyboard">
                 <view class="keyboard-meta">
                     <view class="keyboard-meta-left">
@@ -105,11 +105,6 @@
                             <view class="picker-date">{{ detailData.time }}</view>
                         </view>
                         <view class="keyboard-menu-view keyboard-menu-account">
-                            <!-- <select-account
-                                v-if="detailData.direction !== 3"
-                                :active.sync="accountIndex"
-                                class="picker-account"
-                            ></select-account> -->
                             <view
                                 v-if="detailData.direction !== 3"
                                 class="picker-account"
@@ -128,11 +123,13 @@
         <select-account
             v-model="selectAccountShow"
             :active="accountIndex"
-            @confirm="handleAccountConfirm"
+            @confirm="handleChangeAccount"
         ></select-account>
         <tui-calendar
             ref="calendar"
             is-fixed
+            active-bg-color="#007aff"
+            btn-type="blue"
             :min-date="dateStart"
             :max-date="dateEnd"
             :init-start-date="detailData.time"
@@ -326,9 +323,6 @@ export default {
         }
     },
     methods: {
-        handleAccountConfirm(item, index) {
-            this.accountIndex = index;
-        },
         handleShowAccountList() {
             this.selectAccountShow = true;
         },
@@ -438,8 +432,8 @@ export default {
             this.detailData.time = e.result;
         },
         // 选择账户
-        handleChangeAccount(e) {
-            this.accountIndex = e.target.value;
+        handleChangeAccount(item, index) {
+            this.accountIndex = index;
             this.detailData.account_id = this.accountList[this.accountIndex].id;
         },
         // 记录账单
