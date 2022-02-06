@@ -179,13 +179,13 @@
 			/**
 					 * [{
 						 * text:"", 描述：2字以内
-						 * value:"",状态值 
+						 * value:"",状态值
 						 * bgColor:"",背景色
 						 * color:""  文字颜色,
 						 * check:false //是否显示对勾
-						 * 
+						 *
 					 }]
-					 * 
+					 *
 					 * **/
 			status: {
 				type: Array,
