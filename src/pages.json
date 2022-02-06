@@ -2,7 +2,7 @@
     "easycom": {
         "autoscan": true,
         "custom": {
-            "tui-(.*)": "thorui-uni/lib/thorui/tui-$1/tui-$1.vue"
+            "tui-(.*)": "@/thorui/tui-$1/tui-$1.vue"
         }
     },
     "pages": [
