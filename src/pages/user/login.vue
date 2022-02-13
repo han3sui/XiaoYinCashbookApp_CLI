@@ -1,5 +1,6 @@
 <template>
-    <tui-form ref="form"></tui-form>
+    <!-- <tui-form ref="form"></tui-form> -->
+    <view></view>
 </template>
 <script>
 export default {

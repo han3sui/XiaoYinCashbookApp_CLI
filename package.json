@@ -60,7 +60,6 @@
         "dayjs": "^1.10.7",
         "flyio": "^0.6.14",
         "regenerator-runtime": "^0.12.1",
-        "thorui-uni": "^1.7.0",
         "vue": "^2.6.14",
         "vuex": "^3.6.2"
     },
@@ -97,7 +96,7 @@
         "postcss-pxtransform": "^3.3.9",
         "prettier": "^2.5.1",
         "sass": "^1.42.1",
-        "sass-loader": "10.2.0",
+        "sass-loader": "8.0.2",
         "style-resources-loader": "^1.5.0",
         "vue-template-compiler": "^2.6.14"
     },

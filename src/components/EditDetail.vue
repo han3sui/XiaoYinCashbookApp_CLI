@@ -133,6 +133,7 @@
             :min-date="dateStart"
             :max-date="dateEnd"
             :init-start-date="detailData.time"
+            :show-confirm="false"
             @change="handleChangeDate"
         ></tui-calendar>
     </view>

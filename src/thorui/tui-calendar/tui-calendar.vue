@@ -58,7 +58,7 @@
 				<view class="tui-bg-month">{{ month }}</view>
 			</view>
 
-			<view class="tui-calendar-op">
+			<view class="tui-calendar-op" v-if="showConfirm">
 				<view class="tui-calendar-result">
 					<text>{{ type == 1 ? activeDate : startDate }}</text>
 					<text v-if="endDate">至{{ endDate }}</text>
@@ -277,7 +277,12 @@
 			initEndDate: {
 				type: String,
 				default: ''
-			}
+			},
+            //是否隐藏确认按钮，如果隐藏，则选择之后触发confirm，仅针对单日期模式有效
+            showConfirm:{
+                type:Boolean,
+                default:true
+            }
 		},
 		data() {
 			return {
@@ -537,6 +542,9 @@
 					let date = `${this.year}-${this.month}-${day}`;
 					if (this.type == 1) {
 						this.activeDate = date;
+                        if(this.showConfirm===false){
+                            this.btnFix(false)
+                        }
 					} else {
 						let compare = new Date(date.replace(/\-/g, '/')).getTime() < new Date(this.startDate.replace(
 							/\-/g, '/')).getTime();

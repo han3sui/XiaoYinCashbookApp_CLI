@@ -25,7 +25,7 @@
             </view>
             <view class="cell-wrap">
                 <base-cell>
-                    <base-cell-item title="验证码登录" icon="qingchuhuancun" :arrow="true" @tap="handleToLogin" />
+                    <!-- <base-cell-item title="验证码登录" icon="qingchuhuancun" :arrow="true" @tap="handleToLogin" /> -->
                     <view class="feed-back-wrap">
                         <base-cell-item title="反馈与建议" icon="fankui" :arrow="true" />
                         <button class="feed-back" open-type="feedback" />
