@@ -9,14 +9,13 @@
                     class="account-list-item"
                     @tap="handleSelectAccount(item, index)"
                 >
-                    <text>{{ item.name }}</text>
-                    <!-- <base-icon
+                    <base-icon
                         size="40"
                         :name="item.icon"
                         :title="item.name"
                         :label="item.name"
                         label-margin-left="18"
-                    ></base-icon> -->
+                    ></base-icon>
                     <icon v-if="index === active" type="success" color="#007aff" size="16" />
                 </view>
             </view>
@@ -25,12 +24,10 @@
 </template>
 
 <script>
-import BasePopup from "@/components/BasePopup";
 import BaseIcon from "@/components/BaseIcon";
 export default {
     name: "SelectAccount",
-    comments: {
-        BasePopup,
+    components: {
         BaseIcon
     },
     props: {
