@@ -45,7 +45,7 @@
             </view>
             <view class="cell-wrap">
                 <base-cell>
-                    <base-cell-item title="当前版本" icon="banben" note="v1.1.3" />
+                    <base-cell-item title="当前版本" icon="banben" note="v1.1.5" />
                 </base-cell>
             </view>
         </view>

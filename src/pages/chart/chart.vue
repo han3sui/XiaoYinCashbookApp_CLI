@@ -12,6 +12,11 @@
                             @tap="handleChangeTimeMode('month')"
                             >月</view
                         >
+                        <view
+                            :class="[timeMode === 'custom' ? 'chart-mode-bg' : '']"
+                            @tap="handleChangeTimeMode('custom')"
+                            >自</view
+                        >
                         <view :class="[directionMode === 1 ? 'chart-mode-bg' : '']" @tap="handleChangeDirectionMode(1)"
                             >收</view
                         >
@@ -25,7 +30,11 @@
             </view>
             <view class="chart-head-main">
                 <view class="head-time">
+                    <view v-if="customDate" class="custom-date-value" @click="handleShowCale">{{
+                        customDateValue
+                    }}</view>
                     <picker
+                        v-else
                         class="head-time-picker"
                         mode="date"
                         :value="date"
@@ -92,6 +101,16 @@
             </view>
             <base-empty v-else />
         </scroll-view>
+        <tui-calendar
+            ref="calendar"
+            is-fixed
+            active-bg-color="#007aff"
+            btn-type="blue"
+            :type="2"
+            :min-date="dateStart"
+            :max-date="dateEnd"
+            @change="handleChangeCale"
+        ></tui-calendar>
     </view>
 </template>
 
@@ -99,12 +118,15 @@
 import { chart } from "../../apis/detail";
 import BaseIcon from "../../components/BaseIcon";
 import BaseEmpty from "../../components/BaseEmpty";
+import dayjs from "dayjs";
 
 export default {
     name: "Chart",
     components: { BaseEmpty, BaseIcon },
     data() {
         return {
+            //自定义日期
+            customDate: false,
             // 手风琴模式，当前展开的主分类ID
             activeId: 0,
             // 总支出、收入、详细数据
@@ -123,7 +145,9 @@ export default {
             // 查询参数
             params: {
                 year: 0,
-                month: 0
+                month: 0,
+                start_date: "",
+                end_date: ""
             },
             // 主分类下的子分类的内容高度，用于手风琴效果
             nodeHeight: {}
@@ -137,6 +161,12 @@ export default {
         // 时间picker结束时间
         dateEnd() {
             return this.$util.getDate("end");
+        },
+        customDateValue() {
+            if (!this.params.start_date || !this.params.end_date) {
+                return "请选择";
+            }
+            return `${dayjs(this.params.start_date).format("MM/DD")}-${dayjs(this.params.end_date).format("MM/DD")}`;
         }
     },
     onShow() {
@@ -153,6 +183,9 @@ export default {
         }
     },
     methods: {
+        handleShowCale() {
+            this.$refs.calendar.show();
+        },
         // 初始化子分类内容高度
         initNodeHeight() {
             this.$nextTick(() => {
@@ -179,6 +212,12 @@ export default {
             const res = await chart(this.params);
             this.data = Object.assign({}, this.data, res);
         },
+        handleChangeCale(e) {
+            const { startDate, endDate } = e;
+            this.params.start_date = startDate;
+            this.params.end_date = endDate;
+            this.getChart();
+        },
         // 更改时间picker
         handleChangeDate(e) {
             this.date = e.target.value;
@@ -187,9 +226,17 @@ export default {
         // 更改时间模式
         handleChangeTimeMode(e) {
             this.timeMode = e;
-            if (this.timeMode === "month" && !this.date.split("-")[1]) {
-                this.date = `${this.date}-01`;
+            if (this.timeMode === "custom") {
+                this.customDate = true;
+            } else {
+                this.customDate = false;
+                this.params.start_date = "";
+                this.params.end_date = "";
+                if (this.timeMode === "month" && !this.date.split("-")[1]) {
+                    this.date = `${this.date}-01`;
+                }
             }
+
             this.getChart();
         },
         // 更改收支模式
@@ -210,7 +257,9 @@ export default {
                 category_id: id,
                 direction: this.directionMode,
                 year: this.params.year,
-                month: this.params.month
+                month: this.params.month,
+                start_date: this.params.start_date,
+                end_date: this.params.end_date
             };
             uni.navigateTo({
                 url: "/pages/search/search?params=" + encodeURIComponent(JSON.stringify(params))
@@ -257,6 +306,17 @@ export default {
             & view {
                 width: 33.33%;
                 text-align: center;
+            }
+            .head-time {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                .custom-date-value {
+                    display: flex;
+                    justify-content: center;
+                    align-items: flex-end;
+                    width: 100%;
+                }
             }
             .head-time-picker {
                 & text {
