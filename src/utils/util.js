@@ -202,3 +202,26 @@ export function floatSub(num1, num2, point = 2) {
     Big.DP = point;
     return new Big(num1).sub(new Big(num2)).toNumber();
 }
+
+/** 检查小程序是否有更新并下载提示重启更新 */
+export function checkUpdate() {
+    const updateManager = uni.getUpdateManager();
+    updateManager.onCheckForUpdate(function (res) {
+        // 请求完新版本信息的回调
+        console.log("版本更新判断", res.hasUpdate);
+        if (res.hasUpdate) {
+            updateManager.onUpdateReady(function () {
+                uni.showModal({
+                    title: "更新提示",
+                    content: "新版本已经准备好，是否重启应用？",
+                    success(res) {
+                        if (res.confirm) {
+                            // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+                            updateManager.applyUpdate();
+                        }
+                    }
+                });
+            });
+        }
+    });
+}

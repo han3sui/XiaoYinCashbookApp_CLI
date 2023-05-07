@@ -103,9 +103,9 @@ export function getAllDays() {
  * @param claim,0：非报销，1：待报销，2：已报销
  * @returns {Promise<unknown>}
  */
-export function getClaim(claim = 1) {
-    const link = `${url}/claim/${claim}`;
-    return request(link);
+export function getClaim(params = {}) {
+    const link = `${url}/claim-page`;
+    return request(link, "GET", params);
 }
 
 /**

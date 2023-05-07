@@ -56,6 +56,7 @@ export function getUserInfo() {
         uni.getUserProfile({
             desc: "用于个人信息展示",
             success(info) {
+                console.log("获取用户信息成功：", info);
                 store.commit("SET_USERINFO", {
                     nickName: info.userInfo.nickName,
                     avatarUrl: info.userInfo.avatarUrl

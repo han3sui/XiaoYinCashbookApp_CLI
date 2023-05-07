@@ -1,12 +1,18 @@
 <template>
     <view>
-        <view class="head">
+        <view class="head" @click="handleToUserDetail">
             <view class="avatar">
-                <img alt="" :src="userInfo.avatarUrl || '../../static/images/account.png'" />
+                <img
+                    alt=""
+                    :src="
+                        userInfo.avatarUrl ||
+                        'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'
+                    "
+                />
             </view>
             <view class="info-wrap">
-                <view class="auth-tips" :class="[name.auth ? '' : 'auth-tips-underline']">
-                    <text @click="login">{{ name.name }}</text>
+                <view class="auth-tips">
+                    <text>{{ name || "微信用户" }}</text>
                 </view>
                 <view class="tips">
                     <text>已记账{{ allDays || 0 }}天</text>
@@ -45,7 +51,7 @@
             </view>
             <view class="cell-wrap">
                 <base-cell>
-                    <base-cell-item title="当前版本" icon="banben" note="v1.1.5" />
+                    <base-cell-item title="当前版本" icon="banben" note="v1.1.6" />
                 </base-cell>
             </view>
         </view>
@@ -56,7 +62,6 @@
 import BaseCell from "../../components/BaseCell.vue";
 import BaseCellItem from "../../components/BaseCellItem.vue";
 import { getAllDays } from "@/apis/detail";
-import { doLogin, getUserInfo } from "@/utils/apis";
 
 export default {
     onShareAppMessage() {
@@ -82,24 +87,18 @@ export default {
             return this.$store.state.userInfo;
         },
         name() {
-            const nameInfo = {
-                name: "",
-                auth: false
-            };
-            if (["微信用户", ""].includes(this.userInfo.nickName)) {
-                nameInfo.name = "点击更新";
-                nameInfo.auth = false;
-            } else {
-                nameInfo.name = this.userInfo.nickName;
-                nameInfo.auth = true;
-            }
-            return nameInfo;
+            return this.userInfo.nickName;
         }
     },
     onShow() {
         this.initAllDays();
     },
     methods: {
+        handleToUserDetail() {
+            uni.navigateTo({
+                url: "/pages/user/info"
+            });
+        },
         handleToLogin() {
             uni.navigateTo({
                 url: "/pages/user/login"
@@ -108,10 +107,6 @@ export default {
         // 获取记账天数
         async initAllDays() {
             this.allDays = await getAllDays();
-        },
-        // 授权的同时登录
-        login() {
-            getUserInfo().then(doLogin);
         },
         // 前往报销管理页面
         toClaim() {

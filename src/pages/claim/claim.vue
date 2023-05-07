@@ -1,6 +1,7 @@
 <template>
     <view class="claim">
         <base-subsection class="subsection" :list="subList" :current="subCurrent" @change="handleSubChange" />
+        <!-- <view class="claim-total-money">总计：{{ claimTotal[subCurrent + 1] }}</view> -->
         <scroll-view scroll-y class="content" :style="[contentStyle]">
             <template v-if="claimList[subCurrent + 1].length">
                 <view class="claim-total-money">总计：{{ claimTotal[subCurrent + 1] }}</view>
@@ -42,6 +43,7 @@
                         </view>
                     </view>
                 </checkbox-group>
+                <base-load-more :status="claimStatus[subCurrent + 1]" @retry="retry" />
             </template>
             <base-empty v-else />
         </scroll-view>
@@ -91,6 +93,7 @@ import BaseSubsection from "../../components/BaseSubsection";
 import BaseIcon from "../../components/BaseIcon";
 import BaseEmpty from "../../components/BaseEmpty";
 import BasePopup from "../../components/BasePopup";
+import BaseLoadMore from "@/components/BaseLoadMore";
 
 export default {
     name: "Claim",
@@ -98,7 +101,8 @@ export default {
         BasePopup,
         BaseEmpty,
         BaseIcon,
-        BaseSubsection
+        BaseSubsection,
+        BaseLoadMore
     },
     data() {
         return {
@@ -106,6 +110,11 @@ export default {
             subList: ["未报销", "已报销"],
             // 当前选择tab
             subCurrent: 0,
+            // 加载状态，支持：loading/finished/error/loadmore
+            claimStatus: {
+                1: "",
+                2: ""
+            },
             // 报销列表
             claimList: {
                 1: [],
@@ -116,6 +125,11 @@ export default {
                 1: 0,
                 2: 0
             },
+            claimPage: {
+                1: 0,
+                2: 0
+            },
+            pageSize: 20,
             // 账户列表显示
             pickerVisible: false,
             // 当前报销明细ID,
@@ -161,9 +175,16 @@ export default {
         }
     },
     onShow() {
-        this.initClaim();
+        this.initClaim1();
+        this.initClaim2();
     },
     methods: {
+        // 出错之后，点击重新加载
+        retry() {
+            this.paging.page_no = this.paging.page_no - 1;
+            this.loadStatus = "";
+            this.initList();
+        },
         handleClaim() {
             if (!this.checked.length) {
                 this.$util.toastError("请选择报销明细");
@@ -192,23 +213,25 @@ export default {
             }
         },
         // 拉取报销账单
-        async initClaim() {
-            this.claimList[1] = await getClaim(1);
-            this.claimList[2] = await getClaim(2);
-            if (this.claimList[1].length) {
-                this.claimTotal[1] = 0;
-                this.claimList[1].forEach((item) => {
-                    this.claimTotal[1] += item.money;
-                });
+        async initClaim1() {
+            this.claimStatus[1] = "loading";
+            this.claimPage[1] = this.claimPage[1] + 1;
+            const res = await getClaim({ claim: 1, page_no: this.claimPage[1], page_size: this.pageSize });
+            if (res.list.length < this.pageSize) {
+                this.claimStatus[1] = "finished";
             }
-            if (this.claimList[2].length) {
-                this.claimTotal[2] = 0;
-                this.claimList[2].forEach((item) => {
-                    this.claimTotal[2] += item.money;
-                });
+            this.claimList[1] = res.list;
+            this.claimTotal[1] = res.total;
+        },
+        async initClaim2() {
+            this.claimStatus[2] = "loading";
+            this.claimPage[2] = this.claimPage[2] + 1;
+            const res = await getClaim({ claim: 2, page_no: this.claimPage[2], page_size: this.pageSize });
+            if (res.list.length < this.pageSize) {
+                this.claimStatus[1] = "finished";
             }
-            this.claimTotal[1] = parseFloat(this.claimTotal[1].toFixed(2));
-            this.claimTotal[2] = parseFloat(this.claimTotal[2].toFixed(2));
+            this.claimList[2] = res.list;
+            this.claimTotal[2] = res.total;
         },
         // 切换sub选项卡
         handleSubChange(index) {
@@ -360,19 +383,23 @@ export default {
         display: flex;
         flex-direction: column;
         height: 80vh;
+        position: relative;
         .hide-after {
             &:after {
                 display: none;
             }
         }
-
         .claim-total-money {
             color: #ff9900;
             font-size: 28px;
             font-weight: bold;
             padding: 24px 40px;
             background-color: #f6f6f6;
-            position: relative;
+            position: sticky;
+            z-index: 99;
+            width: 100%;
+            top: 0;
+            left: 0;
 
             &:before {
                 content: "";
@@ -383,6 +410,9 @@ export default {
                 left: 0;
             }
         }
+        // .checkbox-group {
+        //     padding-top: 80px;
+        // }
 
         .claim-item {
             display: flex;

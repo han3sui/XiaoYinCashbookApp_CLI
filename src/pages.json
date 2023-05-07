@@ -93,6 +93,12 @@
             "style": {
                 "navigationBarTitleText": "验证码登录"
             }
+        },
+        {
+            "path": "pages/user/info",
+            "style": {
+                "navigationBarTitleText": "个人信息"
+            }
         }
     ],
     "globalStyle": {

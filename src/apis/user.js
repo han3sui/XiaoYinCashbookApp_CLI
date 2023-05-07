@@ -54,8 +54,8 @@ export function info() {
  * @returns {Promise<unknown>}
  */
 export function updateInfo(data = {}) {
-    const link = `${url}/user`;
-    return request(link, "PUT", data);
+    const link = `${url}/user/updateInfo`;
+    return request(link, "POST", data);
 }
 
 /**
@@ -74,4 +74,27 @@ export function updateCheckTime(content) {
 export function checkList(params) {
     const link = `${url}/check`;
     return request(link, "GET", { ...params, _loading: false });
+}
+
+export function uploadFile(filePath) {
+    return new Promise((resolve, reject) => {
+        uni.uploadFile({
+            url: `${config.REQUEST_URL}${url}/common/upload/file`,
+            filePath,
+            name: "file",
+            header: {
+                Authorization: store.state.token || uni.getStorageSync("token")
+            },
+            success: (res) => {
+                if (res.statusCode === 200) {
+                    resolve(JSON.parse(res.data));
+                } else {
+                    reject(JSON.parse(res.data));
+                }
+            },
+            fail: (err) => {
+                reject(err);
+            }
+        });
+    });
 }
