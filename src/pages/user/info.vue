@@ -65,7 +65,7 @@ export default {
                 this.tmpUserInfo.avatarUrl = res.url;
                 hideLoading();
             } catch (e) {
-                toastError(e.message);
+                toastError(e.message || e.errMsg || "上传头像失败");
             }
         },
         handleUpdate() {
