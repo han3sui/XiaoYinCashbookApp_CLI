@@ -1,26 +1,24 @@
 <template>
     <view class="claim">
         <base-subsection class="subsection" :list="subList" :current="subCurrent" @change="handleSubChange" />
-        <!-- <view class="claim-total-money">总计：{{ claimTotal[subCurrent + 1] }}</view> -->
-        <scroll-view scroll-y class="content" :style="[contentStyle]">
-            <template v-if="claimList[subCurrent + 1].length">
-                <view class="claim-total-money">总计：{{ claimTotal[subCurrent + 1] }}</view>
+        <view class="claim-total-money">总计：{{ claimTotal }}</view>
+        <scroll-view
+            scroll-y
+            :class="['content', subCurrent === 0 ? 'content-0' : '']"
+            :style="[contentStyle]"
+            @scrolltolower="handleOnBottom"
+        >
+            <template v-if="claimList.length">
                 <checkbox-group class="checkbox-group" @change="checkboxChange">
-                    <view v-for="(item, index) in claimList[subCurrent + 1]" :key="index" class="claim-item">
-                        <view
-                            v-if="index === 0 || item.time !== claimList[subCurrent + 1][index - 1].time"
-                            class="claim-item-meta"
-                        >
+                    <view v-for="(item, index) in claimList" :key="index" class="claim-item">
+                        <view v-if="index === 0 || item.time !== claimList[index - 1].time" class="claim-item-meta">
                             <text class="claim-item-meta-date">{{ item.time }} {{ $util.getWeekDay(item.time) }}</text>
                         </view>
                         <view
                             class="claim-item-content"
                             hover-class="hover"
                             :class="[
-                                index < claimList[subCurrent + 1].length &&
-                                item.time !== claimList[subCurrent + 1][index + 1].time
-                                    ? 'hide-after'
-                                    : ''
+                                index < claimList.length && item.time !== claimList[index + 1].time ? 'hide-after' : ''
                             ]"
                         >
                             <view v-if="subCurrent === 0" class="left">
@@ -43,7 +41,7 @@
                         </view>
                     </view>
                 </checkbox-group>
-                <base-load-more :status="claimStatus[subCurrent + 1]" @retry="retry" />
+                <base-load-more :status="loadingStatus" @retry="retry" />
             </template>
             <base-empty v-else />
         </scroll-view>
@@ -111,24 +109,12 @@ export default {
             // 当前选择tab
             subCurrent: 0,
             // 加载状态，支持：loading/finished/error/loadmore
-            claimStatus: {
-                1: "",
-                2: ""
-            },
+            loadingStatus: "",
             // 报销列表
-            claimList: {
-                1: [],
-                2: []
-            },
+            claimList: [],
             // 报销总计
-            claimTotal: {
-                1: 0,
-                2: 0
-            },
-            claimPage: {
-                1: 0,
-                2: 0
-            },
+            claimTotal: 0,
+            pageNo: 0,
             pageSize: 20,
             // 账户列表显示
             pickerVisible: false,
@@ -153,15 +139,14 @@ export default {
         },
         contentStyle() {
             return {
-                // height: this.subCurrent === 0 ? '80vh' : '90vh'
-                height: this.subCurrent === 0 ? "calc(90vh- 100rpx)" : "90vh"
+                // height: this.subCurrent === 0 ? "calc(90vh- 100rpx -160rpx)" : "calc(90vh - 160rpx)"
             };
         },
         checkAllStatus() {
-            if (!this.claimList[1].length) {
+            if (!this.claimList.length) {
                 return false;
             } else {
-                return this.checked.length === this.claimList[1].length;
+                return this.checked.length === this.claimList.length;
             }
         }
     },
@@ -169,19 +154,20 @@ export default {
         checked(newValue) {
             let money = 0;
             newValue.forEach((item) => {
-                money = this.$util.floatAdd(money, this.claimList[1].filter((a) => a.id === Number(item))[0].money);
+                money = this.$util.floatAdd(money, this.claimList.filter((a) => a.id === Number(item))[0].money);
             });
             this.checkedMoney = money;
         }
     },
     onShow() {
-        this.initClaim1();
-        this.initClaim2();
+        this.initList(true);
     },
     methods: {
         // 出错之后，点击重新加载
         retry() {
-            this.paging.page_no = this.paging.page_no - 1;
+            if (this.pageNo) {
+                this.pageNo = this.pageNo - 1;
+            }
             this.loadStatus = "";
             this.initList();
         },
@@ -199,7 +185,7 @@ export default {
         // 选择全部
         handleCheckAll(e) {
             if (e.target.value.length) {
-                this.checked = this.claimList[1].map((item) => item.id);
+                this.checked = this.claimList.map((item) => item.id);
             } else {
                 this.checked = [];
             }
@@ -212,35 +198,38 @@ export default {
                 this.data.add_total = 0;
             }
         },
-        // 拉取报销账单
-        async initClaim1() {
-            this.claimStatus[1] = "loading";
-            this.claimPage[1] = this.claimPage[1] + 1;
-            const res = await getClaim({ claim: 1, page_no: this.claimPage[1], page_size: this.pageSize });
-            if (res.list.length < this.pageSize) {
-                this.claimStatus[1] = "finished";
-            }
-            this.claimList[1] = res.list;
-            this.claimTotal[1] = res.total;
+        handleOnBottom() {
+            this.initList();
         },
-        async initClaim2() {
-            this.claimStatus[2] = "loading";
-            this.claimPage[2] = this.claimPage[2] + 1;
-            const res = await getClaim({ claim: 2, page_no: this.claimPage[2], page_size: this.pageSize });
-            if (res.list.length < this.pageSize) {
-                this.claimStatus[1] = "finished";
+        // 拉取报销账单
+        async initList(refresh = false) {
+            if (!refresh && ["loading", "finished"].includes(this.loadingStatus)) {
+                return;
             }
-            this.claimList[2] = res.list;
-            this.claimTotal[2] = res.total;
+            if (refresh) {
+                this.claimList = [];
+                this.pageNo = 0;
+            }
+            this.loadingStatus = "loading";
+            this.pageNo = this.pageNo + 1;
+            const res = await getClaim({ claim: this.subCurrent + 1, page_no: this.pageNo, page_size: this.pageSize });
+            if (res.list.length < this.pageSize) {
+                this.loadingStatus = "finished";
+            } else {
+                this.loadingStatus = "";
+            }
+            this.claimList.push(...res.list);
+            this.claimTotal = res.total;
         },
         // 切换sub选项卡
         handleSubChange(index) {
             this.subCurrent = index;
+            this.initList(true);
         },
         // FIXME:直接传item，会报错undefined，待继续研究
         // 编辑账单
         handleEdit(index) {
-            const item = this.claimList[this.subCurrent + 1][index];
+            const item = this.claimList[index];
             if (item.claim !== 2) {
                 uni.showActionSheet({
                     itemList: ["编辑明细", "删除明细"],
@@ -259,7 +248,7 @@ export default {
                                         if (res.confirm) {
                                             await detailDel(item.id);
                                             this.$util.toastSuccess("删除成功");
-                                            await this.initClaim();
+                                            await this.initList(true);
                                         }
                                     }
                                 });
@@ -282,7 +271,7 @@ export default {
                                         if (res.confirm) {
                                             await detailDel(item.id);
                                             this.$util.toastSuccess("删除成功");
-                                            await this.initClaim();
+                                            await this.initList(true);
                                         }
                                     }
                                 });
@@ -305,7 +294,7 @@ export default {
                         this.checked.forEach((v) => {
                             let incomeAccountId = item.id;
                             if (item.id === 0) {
-                                incomeAccountId = this.claimList[1].filter((v1) => v1.id === v)[0].account.id;
+                                incomeAccountId = this.claimList.filter((v1) => v1.id === v)[0].account.id;
                             }
                             data.push({
                                 id: v,
@@ -318,7 +307,7 @@ export default {
                         this.activeDetailId = 0;
                         this.pickerVisible = false;
                         this.$util.toastSuccess("报销成功");
-                        await this.initClaim();
+                        await this.initList(true);
                     }
                 }
             });
@@ -368,6 +357,24 @@ export default {
     }
 }
 
+.claim-total-money {
+    color: #ff9900;
+    font-size: 28px;
+    font-weight: bold;
+    padding: 24px 40px;
+    background-color: #f6f6f6;
+    position: relative;
+
+    &:before {
+        content: "";
+        position: absolute;
+        border-left: 8px solid #2979ff;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+}
+
 .claim {
     display: flex;
     flex-direction: column;
@@ -378,41 +385,18 @@ export default {
         justify-content: center;
         height: 10vh;
     }
-
+    .content-0 {
+        height: calc(80vh - 80px) !important;
+    }
     .content {
         display: flex;
         flex-direction: column;
         height: 80vh;
-        position: relative;
         .hide-after {
             &:after {
                 display: none;
             }
         }
-        .claim-total-money {
-            color: #ff9900;
-            font-size: 28px;
-            font-weight: bold;
-            padding: 24px 40px;
-            background-color: #f6f6f6;
-            position: sticky;
-            z-index: 99;
-            width: 100%;
-            top: 0;
-            left: 0;
-
-            &:before {
-                content: "";
-                position: absolute;
-                border-left: 8px solid #2979ff;
-                height: 100%;
-                top: 0;
-                left: 0;
-            }
-        }
-        // .checkbox-group {
-        //     padding-top: 80px;
-        // }
 
         .claim-item {
             display: flex;
