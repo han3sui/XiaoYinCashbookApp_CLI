@@ -357,24 +357,6 @@ export default {
     }
 }
 
-.claim-total-money {
-    color: #ff9900;
-    font-size: 28px;
-    font-weight: bold;
-    padding: 24px 40px;
-    background-color: #f6f6f6;
-    position: relative;
-
-    &:before {
-        content: "";
-        position: absolute;
-        border-left: 8px solid #2979ff;
-        height: 100%;
-        top: 0;
-        left: 0;
-    }
-}
-
 .claim {
     display: flex;
     flex-direction: column;
@@ -385,13 +367,33 @@ export default {
         justify-content: center;
         height: 10vh;
     }
+    .claim-total-money {
+        display: flex;
+        align-items: center;
+        height: 80px;
+        color: #ff9900;
+        font-size: 28px;
+        font-weight: bold;
+        padding: 0 40px;
+        background-color: #f6f6f6;
+        position: relative;
+
+        &:before {
+            content: "";
+            position: absolute;
+            border-left: 8px solid #2979ff;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+    }
     .content-0 {
-        height: calc(80vh - 80px) !important;
+        height: calc(100vh - 10vh - 80px - 100px) !important;
     }
     .content {
         display: flex;
         flex-direction: column;
-        height: 80vh;
+        height: calc(100vh - 10vh - 80px);
         .hide-after {
             &:after {
                 display: none;
@@ -496,7 +498,7 @@ export default {
     width: 100vw;
     background-color: #f6f6f6;
     display: flex;
-    flex: 1;
+    height: 100px;
     justify-content: space-between;
     align-items: center;
 

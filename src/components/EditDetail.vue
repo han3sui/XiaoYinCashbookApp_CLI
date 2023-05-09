@@ -94,7 +94,7 @@
                             v-for="(item, index) in keyData"
                             :key="index"
                             class="keyboard-main-item"
-                            @tap="handleEdit(item)"
+                            @touchstart="handleEdit(item)"
                         >
                             <text v-if="item !== 'd'">{{ item }}</text>
                             <base-icon v-else name="delete" size="60" />
