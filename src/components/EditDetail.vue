@@ -85,7 +85,12 @@
                         </view>
                     </view>
                     <view class="keyboard-meta-money">
-                        <text>{{ detailData.money }}</text>
+                        <input
+                            v-model="detailData.money"
+                            :disabled="!isPc"
+                            placeholder="点击输入金额"
+                            placeholder-style="font-size:28rpx"
+                        />
                     </view>
                 </view>
                 <view class="keyboard-content">
@@ -220,6 +225,9 @@ export default {
         };
     },
     computed: {
+        isPc() {
+            return ["windows", "mac", "devtools"].includes(uni.getSystemInfoSync().platform);
+        },
         // 编辑状态下启用底部安全区
         safeArea() {
             return this.detail.id !== 0;
@@ -276,6 +284,17 @@ export default {
         accountList() {
             this.accountIndex = 0;
             this.detailData.account_id = this.accountList[this.accountIndex].id;
+        },
+        keyboardShow(newVal) {
+            if (!newVal) {
+                return;
+            }
+            if (!this.isPc) {
+                return;
+            }
+            if (Number(this.detailData.money) === 0) {
+                this.detailData.money = "";
+            }
         }
     },
     mounted() {
@@ -463,6 +482,11 @@ export default {
         // 保存账单
         handleSave() {
             this.detailData.money = Number(this.detailData.money);
+            const pattern = /^[^\d]*(\d+)(\.\d{1,2})?[^\d]*$/;
+            if (!pattern.test(this.detailData.money)) {
+                this.$util.toastError("请输入正确的金额");
+                return;
+            }
             if (this.detailData.direction !== 2) {
                 this.detailData.claim = 0;
             }
