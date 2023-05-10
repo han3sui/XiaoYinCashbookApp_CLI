@@ -388,7 +388,7 @@ export default {
         }
     }
     .content-0 {
-        height: calc(100vh - 10vh - 80px - 100px) !important;
+        height: calc(100vh - 10vh - 80px - 100px - env(safe-area-inset-bottom)) !important;
     }
     .content {
         display: flex;
