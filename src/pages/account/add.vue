@@ -33,6 +33,16 @@
                     <checkbox style="transform: scale(0.8)" value="1" :checked="data.add_total !== 0" />
                 </checkbox-group>
             </view>
+            <view class="form-item">
+                <view class="title">排序</view>
+                <input
+                    v-model.number="data.sort"
+                    class="input"
+                    type="number"
+                    placeholder="请输入排序"
+                    placeholder-style="font-size:28rpx"
+                />
+            </view>
         </view>
         <view class="button-wrap">
             <button type="primary" @tap="save(true)">保存并返回</button>
