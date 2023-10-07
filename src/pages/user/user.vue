@@ -51,7 +51,7 @@
             </view>
             <view class="cell-wrap">
                 <base-cell>
-                    <base-cell-item title="当前版本" icon="banben" note="v1.1.6" />
+                    <base-cell-item title="当前版本" icon="banben" :note="version" />
                 </base-cell>
             </view>
         </view>
@@ -76,7 +76,8 @@ export default {
     },
     data() {
         return {
-            allDays: 0
+            allDays: 0,
+            version: ""
         };
     },
     computed: {
@@ -92,6 +93,10 @@ export default {
     },
     onShow() {
         this.initAllDays();
+        const miniProgramVersion = uni.getAccountInfoSync().miniProgram.version;
+        if (miniProgramVersion) {
+            this.version = `v${miniProgramVersion}`;
+        }
     },
     methods: {
         handleToUserDetail() {
