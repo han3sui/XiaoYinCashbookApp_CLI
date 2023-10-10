@@ -102,7 +102,10 @@ export default {
     },
     methods: {
         setImageUrl(name) {
-            if (name.indexOf("icon-") !== -1) {
+            const regex = /^(http|https):\/\//;
+            if (regex.test(name)) {
+                return name;
+            } else if (name.indexOf("icon-") !== -1) {
                 return `${config.CDN_URL}/icon/${name}.png`;
             } else {
                 return name;

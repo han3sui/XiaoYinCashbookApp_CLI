@@ -2,7 +2,7 @@
     <view class="body">
         <template v-for="(item, index) in iconList">
             <view :key="index" class="icon-wrap" hover-class="icon-wrap--hover" @tap="selectIcon(item)">
-                <img alt="" :src="item.name | getIconUrl" />
+                <image lazy-load alt="" :src="item.name | getIconUrl" />
             </view>
         </template>
     </view>

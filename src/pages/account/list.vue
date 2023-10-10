@@ -54,6 +54,7 @@ import * as account from "../../apis/account.js";
 import { updateCheckTime } from "@/apis/user";
 import { isExistUncheck } from "@/apis/detail";
 import { initAccount } from "@/utils/apis";
+import dayjs from "dayjs";
 
 export default {
     components: {
@@ -100,12 +101,7 @@ export default {
         },
         // 本地时间工具类
         getLocalTime(nS) {
-            return new Date(parseInt(nS) * 1000)
-                .toLocaleString("chinese", {
-                    hour12: false
-                })
-                .replace(/年|月/g, "-")
-                .replace(/日/g, " ");
+            return dayjs.unix(nS).format("YYYY/MM/DD HH:mm:ss");
         },
         // 初始化核账状态
         initCheckStatus() {

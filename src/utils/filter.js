@@ -7,6 +7,8 @@ import config from "@/utils/config";
  * @returns {string}
  */
 export function getIconUrl(name) {
+    const regex = /^(http|https):\/\//;
+    if (regex.test(name)) return name;
     return `${config.CDN_URL}/icon/${name}.png`;
 }
 
